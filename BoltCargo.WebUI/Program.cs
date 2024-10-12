@@ -46,11 +46,11 @@ builder.Services.AddDbContext<CargoDbContext>(option =>
 
 builder.Services.AddIdentity<CustomIdentityUser, CustomIdentityRole>(options =>
 {
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireDigit = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
 })
     .AddEntityFrameworkStores<CargoDbContext>()
     .AddDefaultTokenProviders();
@@ -82,7 +82,6 @@ builder.Services.AddAuthorization(Options =>
     Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
     Options.AddPolicy("DriverPolicy", policy => policy.RequireRole("Driver"));
 });
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

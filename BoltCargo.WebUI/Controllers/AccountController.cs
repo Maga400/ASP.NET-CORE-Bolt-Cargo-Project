@@ -31,8 +31,9 @@ namespace BoltCargo.WebUI.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("registerClient")]
-        public async Task<IActionResult> RegisterClient([FromBody] RegisterDto dto)
+        [HttpPost("register")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             var user = new CustomIdentityUser
             {
@@ -46,42 +47,12 @@ namespace BoltCargo.WebUI.Controllers
 
             if (result.Succeeded)
             {
-                if (!await _roleManager.RoleExistsAsync("Client"))
+                if (!await _roleManager.RoleExistsAsync(dto.Role!))
                 {
-                    await _roleManager.CreateAsync(new CustomIdentityRole { Name = "Client" });
-                    //await _roleManager.CreateAsync(new IdentityRole("Client"));
+                    await _roleManager.CreateAsync(new CustomIdentityRole { Name = dto.Role });
                 }
 
-                await _userManager.AddToRoleAsync(user, "Client");
-
-                return Ok(new { Status = "Success", Message = "User created successfuly!" });
-            }
-
-            return BadRequest(new { Status = "Error", Message = "User creation failed!", Error = result.Errors });
-        }
-
-        [HttpPost("registerDriver")]
-        public async Task<IActionResult> RegisterDriver([FromBody] RegisterDto dto)
-        {
-            var user = new CustomIdentityUser
-            {
-                UserName = dto.Username,
-                Email = dto.Email,
-                ImagePath = dto.ImagePath,
-                CarType = dto.CarType,
-            };
-
-            var result = await _userManager.CreateAsync(user, dto.Password);
-
-            if (result.Succeeded)
-            {
-                if (!await _roleManager.RoleExistsAsync("Driver"))
-                {
-                    await _roleManager.CreateAsync(new CustomIdentityRole { Name = "Driver" });
-                    //await _roleManager.CreateAsync(new IdentityRole("Client"));
-                }
-
-                await _userManager.AddToRoleAsync(user, "Driver");
+                await _userManager.AddToRoleAsync(user, dto.Role);
 
                 return Ok(new { Status = "Success", Message = "User created successfuly!" });
             }
@@ -90,6 +61,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpPost("login")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await _signInManager.PasswordSignInAsync(dto.Username, dto.Password, false, false);

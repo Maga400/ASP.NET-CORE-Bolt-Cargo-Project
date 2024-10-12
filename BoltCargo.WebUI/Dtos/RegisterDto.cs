@@ -14,5 +14,7 @@ namespace BoltCargo.WebUI.Dtos
         public string? ImagePath { get; set; }
         [Required]
         public string? CarType { get; set; }
+        [Required]
+        public string? Role { get; set; }
     }
 }
