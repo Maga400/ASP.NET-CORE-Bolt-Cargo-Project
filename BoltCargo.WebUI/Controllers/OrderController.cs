@@ -85,6 +85,24 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { message = "No orders found with this car type" });
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("acceptedOrders")]
+        public async Task<List<OrderDto>> GetAcceptedOrders() 
+        {
+            var orders = await _orderService.GetAcceptedOrdersAsync();
+            var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+            return ordersDto;
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("unAcceptedOrders")]
+        public async Task<List<OrderDto>> GetUnAcceptedOrders() 
+        {
+            var orders = await _orderService.GetUnAcceptedOrdersAsync();
+            var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+            return ordersDto;
+        }
+
         // POST api/<OrderController>
         [Authorize(Roles = "Client")]
         [HttpPost]
@@ -97,6 +115,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         // PUT api/<OrderController>/5
+        [Authorize(Roles = "Driver")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] OrderUpdateDto dto)
         {

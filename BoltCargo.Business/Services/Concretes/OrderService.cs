@@ -28,6 +28,7 @@ namespace BoltCargo.Business.Services.Concretes
             await _orderDAL.DeleteAsync(order);
         }
 
+
         public async Task<List<Order>> GetAllAsync()
         {
             return await _orderDAL.GetAllAsync();
@@ -50,6 +51,15 @@ namespace BoltCargo.Business.Services.Concretes
         public async Task<List<Order>> GetByUserIdAsync(string id)
         {
             return await _orderDAL.GetByUserIdAsync(id);
+        }
+
+        public async Task<List<Order>> GetAcceptedOrdersAsync()
+        {
+            return await _orderDAL.GetAcceptedOrdersAsync();
+        }
+        public async Task<List<Order>> GetUnAcceptedOrdersAsync()
+        {
+            return await _orderDAL.GetUnAcceptedOrdersAsync();
         }
 
         public async Task UpdateAsync(Order order)

@@ -14,6 +14,8 @@ namespace BoltCargo.Business.Services.Abstracts
         Task<List<Order>> GetByUserIdAsync(string id);
         Task<List<Order>> GetByDriverIdAsync(string id);
         Task<List<Order>> GetByCarTypeAsync(string carType);
+        Task<List<Order>> GetAcceptedOrdersAsync();
+        Task<List<Order>> GetUnAcceptedOrdersAsync();
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);
         Task DeleteAsync(Order order);
