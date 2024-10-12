@@ -1,0 +1,153 @@
+﻿using AutoMapper;
+using BoltCargo.Entities.Entities;
+using BoltCargo.WebUI.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace BoltCargo.WebUI.Controllers
+{
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
+    {
+        private readonly UserManager<CustomIdentityUser> _userManager;
+        private readonly SignInManager<CustomIdentityUser> _signInManager;
+        private readonly RoleManager<CustomIdentityRole> _roleManager;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
+
+        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _configuration = configuration;
+            _mapper = mapper;
+        }
+
+        [HttpPost("registerClient")]
+        public async Task<IActionResult> RegisterClient([FromBody] RegisterDto dto)
+        {
+            var user = new CustomIdentityUser
+            {
+                UserName = dto.Username,
+                Email = dto.Email,
+                ImagePath = dto.ImagePath,
+                CarType = dto.CarType,
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync("Client"))
+                {
+                    await _roleManager.CreateAsync(new CustomIdentityRole { Name = "Client" });
+                    //await _roleManager.CreateAsync(new IdentityRole("Client"));
+                }
+
+                await _userManager.AddToRoleAsync(user, "Client");
+
+                return Ok(new { Status = "Success", Message = "User created successfuly!" });
+            }
+
+            return BadRequest(new { Status = "Error", Message = "User creation failed!", Error = result.Errors });
+        }
+
+        [HttpPost("registerDriver")]
+        public async Task<IActionResult> RegisterDriver([FromBody] RegisterDto dto)
+        {
+            var user = new CustomIdentityUser
+            {
+                UserName = dto.Username,
+                Email = dto.Email,
+                ImagePath = dto.ImagePath,
+                CarType = dto.CarType,
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync("Driver"))
+                {
+                    await _roleManager.CreateAsync(new CustomIdentityRole { Name = "Driver" });
+                    //await _roleManager.CreateAsync(new IdentityRole("Client"));
+                }
+
+                await _userManager.AddToRoleAsync(user, "Driver");
+
+                return Ok(new { Status = "Success", Message = "User created successfuly!" });
+            }
+
+            return BadRequest(new { Status = "Error", Message = "User creation failed!", Error = result.Errors });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            var result = await _signInManager.PasswordSignInAsync(dto.Username, dto.Password, false, false);
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByNameAsync(dto.Username);
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name,user.UserName),
+                        new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                    };
+
+                foreach (var role in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var token = GetToken(authClaims);
+
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
+
+            }
+
+            return Unauthorized();
+        }
+
+        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        {
+            var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
+                expires: DateTime.Now.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256)
+                );
+
+            return token;
+        }
+
+        [Authorize]
+        [HttpGet("currentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var username = User.Identity.Name;
+            var currentUser = await _userManager.FindByNameAsync(username);
+
+            if (currentUser != null)
+            {
+                var currentUserDto = _mapper.Map<UserDto>(currentUser);
+                return Ok(new { user = currentUserDto });
+            }
+            return NotFound(new { message = "Current User Notfound!" });
+        }
+    }
+}
