@@ -37,7 +37,7 @@ namespace BoltCargo.WebUI.Controllers
             var existingUser = await _userManager.FindByNameAsync(dto.Username);
             if (existingUser != null)
             {
-                return BadRequest(new { Status = "Error", Message = "A user with this username already exists!" });
+                return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
             }
 
             var user = new CustomIdentityUser
