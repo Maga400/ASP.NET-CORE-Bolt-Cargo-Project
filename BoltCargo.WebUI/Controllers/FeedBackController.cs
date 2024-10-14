@@ -50,7 +50,6 @@ namespace BoltCargo.WebUI.Controllers
 
         // POST api/<FeedBackController>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Post([FromBody] FeedBackExtensionDto dto)
         {
             //var feedBack = new FeedBack

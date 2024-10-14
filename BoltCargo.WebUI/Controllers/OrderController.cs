@@ -106,7 +106,6 @@ namespace BoltCargo.WebUI.Controllers
         // POST api/<OrderController>
         [Authorize(Roles = "Client")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Post([FromBody] OrderExtensionDto dto)
         {
             var order = _mapper.Map<Order>(dto);

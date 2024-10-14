@@ -32,9 +32,14 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpPost("register")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
+            var existingUser = await _userManager.FindByNameAsync(dto.Username);
+            if (existingUser != null)
+            {
+                return BadRequest(new { Status = "Error", Message = "A user with this username already exists!" });
+            }
+
             var user = new CustomIdentityUser
             {
                 UserName = dto.Username,
@@ -47,7 +52,7 @@ namespace BoltCargo.WebUI.Controllers
 
             if (result.Succeeded)
             {
-                if (!await _roleManager.RoleExistsAsync(dto.Role!))
+                if (!await _roleManager.RoleExistsAsync(dto.Role))
                 {
                     await _roleManager.CreateAsync(new CustomIdentityRole { Name = dto.Role });
                 }
@@ -61,7 +66,6 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpPost("login")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await _signInManager.PasswordSignInAsync(dto.Username, dto.Password, false, false);

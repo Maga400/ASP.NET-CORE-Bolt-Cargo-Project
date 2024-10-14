@@ -45,8 +45,6 @@ namespace BoltCargo.WebUI.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        [ValidateAntiForgeryToken]
-
         public void Post([FromBody] string value)
         {
         }
