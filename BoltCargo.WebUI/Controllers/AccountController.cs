@@ -31,6 +31,7 @@ namespace BoltCargo.WebUI.Controllers
             _mapper = mapper;
         }
 
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
