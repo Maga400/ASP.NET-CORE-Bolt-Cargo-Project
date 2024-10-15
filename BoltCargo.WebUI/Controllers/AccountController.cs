@@ -31,8 +31,8 @@ namespace BoltCargo.WebUI.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("existUser/${name}")]
-        public async Task<IActionResult> ExistUser([FromBody] string name)
+        [HttpPost("existUser")]
+        public async Task<IActionResult> ExistUser([FromQuery] string name)
         {
             var existingUser = await _userManager.FindByNameAsync(name);
             if (existingUser != null)
