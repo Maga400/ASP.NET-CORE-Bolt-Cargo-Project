@@ -31,15 +31,26 @@ namespace BoltCargo.WebUI.Controllers
             _mapper = mapper;
         }
 
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        [HttpPost("existUser/${name}")]
+        public async Task<IActionResult> ExistUser([FromBody] string name)
         {
-            var existingUser = await _userManager.FindByNameAsync(dto.Username);
+            var existingUser = await _userManager.FindByNameAsync(name);
             if (existingUser != null)
             {
                 return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
             }
+
+            return Ok(new { Status = "Success" });
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            //var existingUser = await _userManager.FindByNameAsync(dto.Username);
+            //if (existingUser != null)
+            //{
+            //    return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
+            //}
 
             var user = new CustomIdentityUser
             {
@@ -118,11 +129,12 @@ namespace BoltCargo.WebUI.Controllers
         {
             var username = User.Identity.Name;
             var currentUser = await _userManager.FindByNameAsync(username);
+            var userRole = await _userManager.GetRolesAsync(currentUser);
 
             if (currentUser != null)
             {
                 var currentUserDto = _mapper.Map<UserDto>(currentUser);
-                return Ok(new { user = currentUserDto });
+                return Ok(new { user = currentUserDto, role = userRole });
             }
             return NotFound(new { message = "Current User Notfound!" });
         }
