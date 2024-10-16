@@ -39,19 +39,13 @@ namespace BoltCargo.WebUI.Controllers
             {
                 return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
             }
-
+            
             return Ok(new { Status = "Success" });
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            //var existingUser = await _userManager.FindByNameAsync(dto.Username);
-            //if (existingUser != null)
-            //{
-            //    return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
-            //}
-
             var user = new CustomIdentityUser
             {
                 UserName = dto.Username,
