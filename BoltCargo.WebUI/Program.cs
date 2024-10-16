@@ -5,7 +5,10 @@ using BoltCargo.DataAccess.Repositories.Abstracts;
 using BoltCargo.DataAccess.Repositories.Concretes;
 using BoltCargo.Entities.Entities;
 using BoltCargo.WebUI.Middlewares;
+using BoltCargo.WebUI.Services.Abstracts;
+using BoltCargo.WebUI.Services.Concretes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +29,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
 
 builder.Services.AddScoped<IFeedBackDAL, FeedBackDAL>();
 builder.Services.AddScoped<IFeedBackService, FeedBackService>();
@@ -86,6 +97,8 @@ builder.Services.AddAuthorization(Options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//builder.WebHost.UseUrls("https://*":10604);
 
 var app = builder.Build();
 
