@@ -55,11 +55,11 @@ namespace BoltCargo.WebUI.Controllers
             var myFeedBacks = feedBacks.Where(f => f.UserId == userId);
 
             if (myFeedBacks != null)
-            {
+            { 
                 var myFeedBacksDto = _mapper.Map<List<FeedBackDto>>(myFeedBacks);
                 return Ok(new { MyFeedBacks = myFeedBacksDto });
             }
-
+             
             return NotFound(new { Message = "No feedbacks found with this id" });
 
         }
@@ -77,11 +77,6 @@ namespace BoltCargo.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] FeedBackExtensionDto dto)
         {
-            //var feedBack = new FeedBack
-            //{
-            //    Name = dto.Name,
-            //    Content = dto.Content,
-            //};
             var feedBack = _mapper.Map<FeedBack>(dto);
             await _feedBackService.AddAsync(feedBack);
             return Ok(new { message = "Feedback Added Successfully" });

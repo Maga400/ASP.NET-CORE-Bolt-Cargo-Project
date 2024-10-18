@@ -10,6 +10,6 @@ namespace BoltCargo.WebUI.Dtos
         public string? CarType { get; set; }
         public string? Email { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
-        public virtual ICollection<FeedBack>? FeedBacks { get; set; }
+        public virtual ICollection<FeedBack>? FeedBacks { get; set; } 
     }
 }
