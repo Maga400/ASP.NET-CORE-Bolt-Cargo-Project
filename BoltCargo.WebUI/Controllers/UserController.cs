@@ -1,24 +1,28 @@
 ﻿using AutoMapper;
 using BoltCargo.Business.Services.Abstracts;
+using BoltCargo.Entities.Entities;
 using BoltCargo.WebUI.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoltCargo.WebUI.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly ICustomIdentityUserService _customIdentityUserService;
+        private readonly UserManager<CustomIdentityUser> _userManager;
         private readonly IMapper _mapper;
 
-        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper)
+        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager)
         {
             _customIdentityUserService = customIdentityUserService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: api/<UserController>
@@ -43,16 +47,33 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { message = "No user found with this id" });
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(string id, [FromBody] UserUpdateDto dto)
         {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new { Message = "No user found with this id!" });
+            }
+
+            var passwordHasher = new PasswordHasher<CustomIdentityUser>();
+            user.UserName = dto.UserName;
+            user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
+            user.Email = dto.Email;
+            user.CarType = dto.CarType;
+            user.ImagePath = dto.ImagePath;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "User Updated Successfully " });
+            }
+
+            return BadRequest(new { Message = "Something went wrong! " });
+
         }
 
         // DELETE api/<UserController>/5

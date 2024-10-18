@@ -48,6 +48,31 @@ namespace BoltCargo.WebUI.Controllers
 
         }
 
+        [HttpGet("myFeedBacks/{userId}")]
+        public async Task<IActionResult> GetMyFeedBacks(string userId)
+        {
+            var feedBacks = await _feedBackService.GetAllAsync();
+            var myFeedBacks = feedBacks.Where(f => f.UserId == userId);
+
+            if (myFeedBacks != null)
+            {
+                var myFeedBacksDto = _mapper.Map<List<FeedBackDto>>(myFeedBacks);
+                return Ok(new { MyFeedBacks = myFeedBacksDto });
+            }
+
+            return NotFound(new { Message = "No feedbacks found with this id" });
+
+        }
+
+        [HttpGet("anotherFeedBacks/{userId}")]
+        public async Task<IActionResult> GetAnotherFeedBacks(string userId) 
+        {
+            var feedBacks = await _feedBackService.GetAllAsync();
+            var anotherFeedBacks = feedBacks.Where(f => f.UserId != userId).ToList();
+            var anotherFeedBackDtos = _mapper.Map<List<FeedBackDto>>(anotherFeedBacks);
+            return Ok(new { AnotherFeedBacks = anotherFeedBackDtos });
+        }
+
         // POST api/<FeedBackController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] FeedBackExtensionDto dto)

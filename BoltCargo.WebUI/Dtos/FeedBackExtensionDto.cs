@@ -11,6 +11,6 @@ namespace BoltCargo.WebUI.Dtos
         public string? Content { get; set; }
         [Required]
         public string? UserId { get; set; }
-        public virtual CustomIdentityUser? User { get; set; }
+        //public virtual CustomIdentityUser? User { get; set; }
     }
 }

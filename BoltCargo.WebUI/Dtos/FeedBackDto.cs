@@ -8,6 +8,6 @@ namespace BoltCargo.WebUI.Dtos
         public string? Name { get; set; }
         public string? Content { get; set; }
         public string? UserId { get; set; }
-        public virtual CustomIdentityUser? User { get; set; }
+        //public virtual CustomIdentityUser? User { get; set; }
     }
 }
