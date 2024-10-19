@@ -4,6 +4,7 @@ using BoltCargo.DataAccess.Data;
 using BoltCargo.DataAccess.Repositories.Abstracts;
 using BoltCargo.DataAccess.Repositories.Concretes;
 using BoltCargo.Entities.Entities;
+using BoltCargo.WebUI.Hubs;
 using BoltCargo.WebUI.Middlewares;
 using BoltCargo.WebUI.Services.Abstracts;
 using BoltCargo.WebUI.Services.Concretes;
@@ -29,6 +30,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.Configure<FormOptions>(o =>
@@ -120,5 +123,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MessageHub>("/offers");
 
 app.Run();

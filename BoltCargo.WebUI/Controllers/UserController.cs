@@ -60,7 +60,7 @@ namespace BoltCargo.WebUI.Controllers
 
             var passwordHasher = new PasswordHasher<CustomIdentityUser>();
             user.UserName = dto.UserName;
-            user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
+            user.PasswordHash = passwordHasher.HashPassword(user, dto.Password); 
             user.Email = dto.Email;
             user.CarType = dto.CarType;
             user.ImagePath = dto.ImagePath;
