@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoltCargo.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -32,6 +32,24 @@ namespace BoltCargo.WebUI.Controllers
             var users = await _customIdentityUserService.GetAllAsync();
             var usersDto = _mapper.Map<List<UserDto>>(users);
             return usersDto;
+        }
+
+        [HttpGet("AllDrivers")]
+        public async Task<List<UserDto>> GetAllDrivers()
+        {
+            var drivers = await _userManager.GetUsersInRoleAsync("Driver");
+            var orderedDrivers = drivers.OrderByDescending(u => u.IsOnline);
+            var driverDtos = _mapper.Map<List<UserDto>>(orderedDrivers);
+            return driverDtos;
+        }
+
+        [HttpGet("AllClients")]
+        public async Task<List<UserDto>> GetAllClients()
+        {
+            var clients = await _userManager.GetUsersInRoleAsync("Client");
+            var orderedClients = clients.OrderByDescending(u => u.IsOnline);
+            var clientDtos = _mapper.Map<List<UserDto>>(orderedClients);
+            return clientDtos;
         }
 
         // GET api/<UserController>/5

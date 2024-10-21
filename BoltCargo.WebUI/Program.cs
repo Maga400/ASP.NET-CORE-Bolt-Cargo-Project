@@ -124,6 +124,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<MessageHub>("/offers");
+app.MapHub<MessageHub>("/messageHub");
 
 app.Run();

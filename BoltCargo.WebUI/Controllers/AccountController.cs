@@ -39,7 +39,7 @@ namespace BoltCargo.WebUI.Controllers
             {
                 return BadRequest(new { Status = "Name Error", Message = "A user with this username already exists!" });
             }
-            
+
             return Ok(new { Status = "Success" });
         }
 
@@ -93,6 +93,8 @@ namespace BoltCargo.WebUI.Controllers
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
+                user.IsOnline = true;
+                await _userManager.UpdateAsync(user);
                 var token = GetToken(authClaims);
 
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
@@ -131,6 +133,25 @@ namespace BoltCargo.WebUI.Controllers
                 return Ok(new { user = currentUserDto, role = userRole });
             }
             return NotFound(new { message = "Current User Notfound!" });
+        }
+
+        [Authorize]
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var username = User.Identity.Name;
+            var currentUser = await _userManager.FindByNameAsync(username);
+
+
+            if (currentUser != null)
+            {
+                currentUser.IsOnline = false;
+                await _userManager.UpdateAsync(currentUser);
+                return Ok(new { Message = "User logouted succesfully" });
+
+            }
+
+            return NotFound(new { Message = "User logouting failed" });
         }
     }
 }

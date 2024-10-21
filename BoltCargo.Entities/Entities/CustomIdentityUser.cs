@@ -11,6 +11,7 @@ namespace BoltCargo.Entities.Entities
     {
         public string? CarType { get; set; }
         public string? ImagePath { get; set; }
+        public bool IsOnline { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
         public CustomIdentityUser()
