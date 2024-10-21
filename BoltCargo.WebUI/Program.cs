@@ -1,4 +1,4 @@
-using BoltCargo.Business.Services.Abstracts;
+﻿using BoltCargo.Business.Services.Abstracts;
 using BoltCargo.Business.Services.Concretes;
 using BoltCargo.DataAccess.Data;
 using BoltCargo.DataAccess.Repositories.Abstracts;
@@ -28,6 +28,14 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader()
                         .AllowAnyMethod());
 });
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAllApp",
+//        policy => policy.AllowAnyOrigin()
+//                        .AllowAnyHeader()
+//                        .AllowAnyMethod());
+//});
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -106,6 +114,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 app.UseCors("AllowReactApp");
+//app.UseCors("AllowAllApp");
 
 app.UseMiddleware<GlobalErrorHandlerMiddleware>();
 

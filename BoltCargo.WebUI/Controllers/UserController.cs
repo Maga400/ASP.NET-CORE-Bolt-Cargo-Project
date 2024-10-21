@@ -76,9 +76,13 @@ namespace BoltCargo.WebUI.Controllers
                 return NotFound(new { Message = "No user found with this id!" });
             }
 
-            var passwordHasher = new PasswordHasher<CustomIdentityUser>();
+            if (dto.Password != null && dto.Password != "")
+            {
+                var passwordHasher = new PasswordHasher<CustomIdentityUser>();
+                user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
+            }
+
             user.UserName = dto.UserName;
-            user.PasswordHash = passwordHasher.HashPassword(user, dto.Password); 
             user.Email = dto.Email;
             user.CarType = dto.CarType;
             user.ImagePath = dto.ImagePath;
@@ -92,6 +96,26 @@ namespace BoltCargo.WebUI.Controllers
 
             return BadRequest(new { Message = "Something went wrong! " });
 
+        }
+
+        [HttpPost("verifyPassword")]
+        public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(dto.Id);
+
+            if (user != null)
+            {
+                var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+
+                if (passwordValid)
+                {
+                    return Ok(new { Message = "This password is correct" });
+                }
+
+                return BadRequest( new {Message = "This password is incorrect" });
+            }
+
+            return NotFound(new { Message = "No user found with this id" });
         }
 
         // DELETE api/<UserController>/5
