@@ -142,7 +142,6 @@ namespace BoltCargo.WebUI.Controllers
             var username = User.Identity.Name;
             var currentUser = await _userManager.FindByNameAsync(username);
 
-
             if (currentUser != null)
             {
                 currentUser.IsOnline = false;
