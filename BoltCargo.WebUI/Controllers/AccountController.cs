@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BoltCargo.Business.Services.Abstracts;
+using BoltCargo.Business.Services.Concretes;
 using BoltCargo.Entities.Entities;
 using BoltCargo.WebUI.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -19,16 +21,18 @@ namespace BoltCargo.WebUI.Controllers
         private readonly UserManager<CustomIdentityUser> _userManager;
         private readonly SignInManager<CustomIdentityUser> _signInManager;
         private readonly RoleManager<CustomIdentityRole> _roleManager;
+        private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper)
+        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _mapper = mapper;
+            _customIdentityUserService = customIdentityUserService;
         }
 
         [HttpPost("existUser")]
@@ -123,17 +127,20 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet("currentUser")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var username = User.Identity.Name;
-            var currentUser = await _userManager.FindByNameAsync(username);
-            var userRole = await _userManager.GetRolesAsync(currentUser);
+            var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-            if (currentUser != null)
+            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+            if (currentUser == null)
             {
-                var currentUserDto = _mapper.Map<UserDto>(currentUser);
-                return Ok(new { user = currentUserDto, role = userRole });
+                return NotFound(new { Message = "Current user not found" });
             }
-            return NotFound(new { message = "Current User Notfound!" });
+
+            var userRole = await _userManager.GetRolesAsync(currentUser);
+            var currentUserDto = _mapper.Map<UserDto>(currentUser);
+            return Ok(new { user = currentUserDto, role = userRole });
+
         }
+
 
         [Authorize]
         [HttpGet("logout")]

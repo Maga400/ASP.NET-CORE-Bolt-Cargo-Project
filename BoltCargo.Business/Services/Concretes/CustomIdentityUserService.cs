@@ -35,6 +35,11 @@ namespace BoltCargo.Business.Services.Concretes
         {
             return await _userDAL.GetByIdAsync(id);
         }
+  
+        public async Task<CustomIdentityUser> GetByUsernameAsync(string name)
+        {
+            return await _userDAL.GetByUsernameAsync(name);
+        }
 
         public async Task UpdateAsync(CustomIdentityUser user)
         {

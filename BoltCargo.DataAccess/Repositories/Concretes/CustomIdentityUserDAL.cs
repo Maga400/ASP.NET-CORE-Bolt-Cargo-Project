@@ -39,6 +39,12 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
             return await _context.Users.Include(nameof(CustomIdentityUser.Orders)).Include(nameof(CustomIdentityUser.FeedBacks)).FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<CustomIdentityUser> GetByUsernameAsync(string name)
+        {
+            
+            return await _context.Users.Include(nameof(CustomIdentityUser.Orders)).Include(nameof(CustomIdentityUser.FeedBacks)).FirstOrDefaultAsync(x => x.UserName == name);
+        }
+
         public async Task UpdateAsync(CustomIdentityUser user)
         {
             _context.Users.Update(user);
