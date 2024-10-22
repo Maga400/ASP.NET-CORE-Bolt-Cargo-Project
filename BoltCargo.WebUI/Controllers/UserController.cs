@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BoltCargo.WebUI.Controllers
 {
@@ -16,13 +20,17 @@ namespace BoltCargo.WebUI.Controllers
     {
         private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly UserManager<CustomIdentityUser> _userManager;
+        private readonly SignInManager<CustomIdentityUser> _signInManager;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager)
+        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager)
         {
             _customIdentityUserService = customIdentityUserService;
             _mapper = mapper;
             _userManager = userManager;
+            _configuration = configuration;
+            _signInManager = signInManager;
         }
 
         // GET: api/<UserController>
@@ -91,11 +99,42 @@ namespace BoltCargo.WebUI.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "User Updated Successfully " });
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name,user.UserName),
+                        new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                    };
+
+                foreach (var role in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var token = GetToken(authClaims);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return Ok(new { Message = "User Updated Successfully ",Token = token });
             }
 
             return BadRequest(new { Message = "Something went wrong! " });
 
+        }
+
+        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        {
+            var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
+                expires: DateTime.Now.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256)
+                );
+
+            return token;
         }
 
         [HttpPost("verifyPassword")]

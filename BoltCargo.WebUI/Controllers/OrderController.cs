@@ -124,7 +124,7 @@ namespace BoltCargo.WebUI.Controllers
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
                 order.IsAccept = dto.IsAccept;
                 order.DriverId = dto.DriverId;
-                 
+                
                 await _orderService.UpdateAsync(order);
                 return Ok(new {Message = "Order Updated Successfully"});
             }
