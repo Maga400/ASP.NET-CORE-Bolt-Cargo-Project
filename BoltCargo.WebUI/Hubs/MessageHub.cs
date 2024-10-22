@@ -1,4 +1,5 @@
-﻿using BoltCargo.Entities.Entities;
+﻿using BoltCargo.Business.Services.Abstracts;
+using BoltCargo.Entities.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
@@ -8,20 +9,26 @@ namespace BoltCargo.WebUI.Hubs
     public class MessageHub : Hub
     {
         private readonly UserManager<CustomIdentityUser> _userManager;
-        public MessageHub(UserManager<CustomIdentityUser> userManager)
+        private readonly ICustomIdentityUserService _customIdentityUserService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public MessageHub(UserManager<CustomIdentityUser> userManager, ICustomIdentityUserService customIdentityUserService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
+            _customIdentityUserService = customIdentityUserService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public override async Task OnConnectedAsync()
         {
-            var user = await _userManager.GetUserAsync(Context.User);
+            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-            if (user != null)
+            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            if (currentUser != null)
             {
-                user.IsOnline = true;
-                await _userManager.UpdateAsync(user);
+                currentUser.IsOnline = true;
+                await _customIdentityUserService.UpdateAsync(currentUser);
 
-                await Clients.All.SendAsync("UserOnlineStatusChanged", user.Id, true);
+                await Clients.All.SendAsync("UserOnlineStatusChanged", currentUser.Id, true);
             }
 
             await base.OnConnectedAsync();
@@ -29,14 +36,16 @@ namespace BoltCargo.WebUI.Hubs
         }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            var user = await _userManager.GetUserAsync(Context.User);
+            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-            if (user != null)
+            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            if (currentUser != null)
             {
-                user.IsOnline = false;
-                await _userManager.UpdateAsync(user);
+                currentUser.IsOnline = false;
+                await _customIdentityUserService.UpdateAsync(currentUser);
 
-                await Clients.All.SendAsync("UserOnlineStatusChanged", user.Id, false);
+                await Clients.All.SendAsync("UserOnlineStatusChanged", currentUser.Id, false);
             }
 
             await base.OnDisconnectedAsync(exception);

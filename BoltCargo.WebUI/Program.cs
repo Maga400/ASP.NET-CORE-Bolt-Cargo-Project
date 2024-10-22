@@ -41,6 +41,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSignalR();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.Configure<FormOptions>(o =>
 {

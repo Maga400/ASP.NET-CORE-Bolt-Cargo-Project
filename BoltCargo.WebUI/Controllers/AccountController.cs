@@ -98,7 +98,7 @@ namespace BoltCargo.WebUI.Controllers
                 }
 
                 user.IsOnline = true;
-                await _userManager.UpdateAsync(user);
+                await _customIdentityUserService.UpdateAsync(user);
                 var token = GetToken(authClaims);
 
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
@@ -141,18 +141,18 @@ namespace BoltCargo.WebUI.Controllers
 
         }
 
-
         [Authorize]
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
-            var username = User.Identity.Name;
-            var currentUser = await _userManager.FindByNameAsync(username);
+            var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
 
             if (currentUser != null)
             {
                 currentUser.IsOnline = false;
-                await _userManager.UpdateAsync(currentUser);
+                await _customIdentityUserService.UpdateAsync(currentUser);
                 return Ok(new { Message = "User logouted succesfully" });
 
             }
