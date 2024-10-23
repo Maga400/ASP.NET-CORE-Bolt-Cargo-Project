@@ -26,7 +26,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         policy => policy.WithOrigins("http://localhost:3000","http://localhost:3001")
                         .AllowAnyHeader()
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowCredentials());
 });
 
 //builder.Services.AddCors(options =>
@@ -34,7 +35,9 @@ builder.Services.AddCors(options =>
 //    options.AddPolicy("AllowAllApp",
 //        policy => policy.AllowAnyOrigin()
 //                        .AllowAnyHeader()
-//                        .AllowAnyMethod());
+//                        .AllowAnyMethod()
+                        //.AllowCredentials());
+
 //});
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

@@ -51,5 +51,10 @@ namespace BoltCargo.WebUI.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        public async Task AllUsers()
+        {
+            await Clients.All.SendAsync("ReceiveUsers");
+        }
+
     }
 }

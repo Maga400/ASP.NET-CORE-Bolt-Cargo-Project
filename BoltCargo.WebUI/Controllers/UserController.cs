@@ -13,7 +13,7 @@ using System.Text;
 
 namespace BoltCargo.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -112,10 +112,10 @@ namespace BoltCargo.WebUI.Controllers
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
-                var token = GetToken(authClaims);
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                var token = GetToken(authClaims);
 
-                return Ok(new { Message = "User Updated Successfully ",Token = token });
+                return Ok(new { Message = "User Updated Successfully ", Token = new JwtSecurityTokenHandler().WriteToken(token)});
             }
 
             return BadRequest(new { Message = "Something went wrong! " });

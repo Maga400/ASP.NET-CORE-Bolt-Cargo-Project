@@ -3,10 +3,12 @@ using BoltCargo.Business.Services.Abstracts;
 using BoltCargo.Business.Services.Concretes;
 using BoltCargo.Entities.Entities;
 using BoltCargo.WebUI.Dtos;
+using BoltCargo.WebUI.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -24,8 +26,9 @@ namespace BoltCargo.WebUI.Controllers
         private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MessageHub> _hubContext;
 
-        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService)
+        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService, IHubContext<MessageHub> hubContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -33,6 +36,7 @@ namespace BoltCargo.WebUI.Controllers
             _configuration = configuration;
             _mapper = mapper;
             _customIdentityUserService = customIdentityUserService;
+            _hubContext = hubContext;
         }
 
         [HttpPost("existUser")]
@@ -68,6 +72,9 @@ namespace BoltCargo.WebUI.Controllers
                 }
 
                 await _userManager.AddToRoleAsync(user, dto.Role);
+
+                var hubContext = _hubContext.Clients.All.SendAsync("AllUsers");
+                await hubContext;
 
                 return Ok(new { Status = "Success", Message = "User created successfuly!" });
             }
