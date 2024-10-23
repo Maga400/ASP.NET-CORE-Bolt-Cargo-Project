@@ -13,7 +13,7 @@ using System.Text;
 
 namespace BoltCargo.WebUI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

@@ -10,11 +10,11 @@ namespace BoltCargo.WebUI.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IPhotoService _photoService;
-        public ImageController(IPhotoService photoService)
+        public ImageController(IPhotoService photoService) 
         {
             _photoService = photoService;
         }
-
+         
         [HttpPost]
         public async Task<IActionResult> Post()
         {
@@ -23,7 +23,7 @@ namespace BoltCargo.WebUI.Controllers
             if (file != null && file.Length > 0)
             {
                 string result = await _photoService.UploadImageAsync(new PhotoCreationDto { File = file });
-                return Ok(new { ImageUrl = result });
+                return Ok(new { ImageUrl = result }); 
             }
             return BadRequest(new { Message = "Photo Creation Failed!" });
         }

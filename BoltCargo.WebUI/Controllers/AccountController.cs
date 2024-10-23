@@ -103,7 +103,7 @@ namespace BoltCargo.WebUI.Controllers
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
-
+                 
                 user.IsOnline = true;
                 await _customIdentityUserService.UpdateAsync(user);
                 var token = GetToken(authClaims);
