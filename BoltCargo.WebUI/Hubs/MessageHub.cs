@@ -1,11 +1,13 @@
 ﻿using BoltCargo.Business.Services.Abstracts;
 using BoltCargo.Entities.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace BoltCargo.WebUI.Hubs
 {
+    //[Authorize]
     public class MessageHub : Hub
     {
         private readonly UserManager<CustomIdentityUser> _userManager;
@@ -19,7 +21,7 @@ namespace BoltCargo.WebUI.Hubs
         }
         public override async Task OnConnectedAsync()
         {
-            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
 
             var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
 
@@ -28,7 +30,7 @@ namespace BoltCargo.WebUI.Hubs
                 currentUser.IsOnline = true;
                 await _customIdentityUserService.UpdateAsync(currentUser);
 
-                await Clients.All.SendAsync("UserOnlineStatusChanged", currentUser.Id, true);
+                await Clients.Others.SendAsync("UserOnlineStatusChanged", currentUser.Id, true);
             }
 
             await base.OnConnectedAsync();
@@ -36,7 +38,7 @@ namespace BoltCargo.WebUI.Hubs
         }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
 
             var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
 
@@ -45,7 +47,7 @@ namespace BoltCargo.WebUI.Hubs
                 currentUser.IsOnline = false;
                 await _customIdentityUserService.UpdateAsync(currentUser);
 
-                await Clients.All.SendAsync("UserOnlineStatusChanged", currentUser.Id, false);
+                await Clients.Others.SendAsync("UserOnlineStatusChanged", currentUser.Id, false);
             }
 
             await base.OnDisconnectedAsync(exception);
@@ -54,7 +56,10 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveUsers");
         }
+        public async Task AllFeedBacks()
+        {
+            await Clients.Others.SendAsync("ReceiveFeedBacks");
+        }
 
     }
 }
- 

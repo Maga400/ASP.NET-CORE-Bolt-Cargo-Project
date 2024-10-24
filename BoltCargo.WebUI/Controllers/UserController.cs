@@ -23,7 +23,6 @@ namespace BoltCargo.WebUI.Controllers
         private readonly SignInManager<CustomIdentityUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-
         public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager)
         {
             _customIdentityUserService = customIdentityUserService;
@@ -45,7 +44,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet("AllDrivers")]
         public async Task<List<UserDto>> GetAllDrivers()
         {
-            var drivers = await _userManager.GetUsersInRoleAsync("Driver");
+            var drivers = await _userManager.GetUsersInRoleAsync("Driver"); 
             var orderedDrivers = drivers.OrderByDescending(u => u.IsOnline);
             var driverDtos = _mapper.Map<List<UserDto>>(orderedDrivers);
             return driverDtos;
