@@ -13,6 +13,10 @@ namespace BoltCargo.WebUI.AutoMappers
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<Order, OrderExtensionDto>().ReverseMap();
             CreateMap<CustomIdentityUser, UserDto>().ReverseMap();
+            CreateMap<Chat, ChatDto>().ReverseMap();
+            CreateMap<Message,MessageDto>().ReverseMap();
+            CreateMap<RelationShip, RelationShipDto>().ReverseMap();
+            CreateMap<RelationShipRequest, RelationShipRequestDto>().ReverseMap();
         }
     }
 }

@@ -14,10 +14,16 @@ namespace BoltCargo.Entities.Entities
         public bool IsOnline { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
+        public virtual ICollection<Chat> Chats { get; set; }
+        public virtual ICollection<RelationShip> RelationShips { get; set; }
+        public virtual ICollection<RelationShipRequest> RelationShipsRequest { get; set; }
         public CustomIdentityUser()
         {
             Orders = new List<Order>();
             FeedBacks = new List<FeedBack>();
+            Chats = new List<Chat>();
+            RelationShips = new List<RelationShip>();
+            RelationShipsRequest = new List<RelationShipRequest>();
         }
     }
 }

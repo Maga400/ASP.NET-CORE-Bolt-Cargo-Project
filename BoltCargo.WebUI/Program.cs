@@ -63,6 +63,18 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICustomIdentityUserDAL, CustomIdentityUserDAL>();
 builder.Services.AddScoped<ICustomIdentityUserService, CustomIdentityUserService>();
 
+builder.Services.AddScoped<IChatDAL, ChatDAL>();
+builder.Services.AddScoped<IChatService, ChatService>();
+
+builder.Services.AddScoped<IMessageDAL, MessageDAL>();
+builder.Services.AddScoped<IMessageService,MessageService>();
+
+builder.Services.AddScoped<IRelationShipDAL,RelationShipDAL>();
+builder.Services.AddScoped<IRelationShipService,RelationShipService>();
+
+builder.Services.AddScoped<IRelationShipRequestDAL,RelationShipRequestDAL>();
+builder.Services.AddScoped<IRelationShipRequestService,RelationShipRequestService>();
+
 var connection = builder.Configuration.GetConnectionString("Default");
 
 builder.Services.AddDbContext<CargoDbContext>(option =>

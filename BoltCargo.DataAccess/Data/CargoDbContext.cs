@@ -17,6 +17,10 @@ namespace BoltCargo.DataAccess.Data
         }
         public DbSet<Order> Orders { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<RelationShip> RelationShips { get; set; }
+        public DbSet<RelationShipRequest> RelationShipRequests { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         //public DbSet<Driver> Drivers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
