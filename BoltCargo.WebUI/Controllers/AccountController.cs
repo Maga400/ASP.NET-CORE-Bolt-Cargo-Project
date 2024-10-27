@@ -27,8 +27,8 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IHubContext<MessageHub> _hubContext;
-
-        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService, IHubContext<MessageHub> hubContext)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -37,6 +37,7 @@ namespace BoltCargo.WebUI.Controllers
             _mapper = mapper;
             _customIdentityUserService = customIdentityUserService;
             _hubContext = hubContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost("existUser")]
@@ -108,6 +109,11 @@ namespace BoltCargo.WebUI.Controllers
                 await _customIdentityUserService.UpdateAsync(user);
                 var token = GetToken(authClaims);
 
+                var identity = new ClaimsIdentity(authClaims, "Registration");
+                var principal = new ClaimsPrincipal(identity);
+
+                _httpContextAccessor.HttpContext!.User = principal;
+
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
 
             }
@@ -137,6 +143,7 @@ namespace BoltCargo.WebUI.Controllers
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
             var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+
             if (currentUser == null)
             {
                 return NotFound(new { Message = "Current user not found" });

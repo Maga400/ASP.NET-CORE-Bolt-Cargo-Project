@@ -12,6 +12,10 @@ namespace BoltCargo.Entities.Entities
         public string? CarType { get; set; }
         public string? ImagePath { get; set; }
         public bool IsOnline { get; set; }
+        public bool IsRelationShip {  get; set; }
+        public bool HasRequestPending { get; set; }
+        public DateTime DisConnectTime { get; set; } = DateTime.Now;
+        public string? ConnectTime { get; set; } = "";
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
         public virtual ICollection<Chat> Chats { get; set; }

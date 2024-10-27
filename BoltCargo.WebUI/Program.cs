@@ -40,11 +40,11 @@ builder.Services.AddCors(options =>
 
 //});
 
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSignalR();
 
-builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.Configure<FormOptions>(o =>
@@ -101,8 +101,8 @@ builder.Services.AddAuthentication(options =>
 })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
+        //options.RequireHttpsMetadata = false;
+        //options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -114,6 +114,8 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorization(Options =>
 {

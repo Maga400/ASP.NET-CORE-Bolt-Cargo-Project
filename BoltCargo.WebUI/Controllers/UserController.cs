@@ -21,15 +21,19 @@ namespace BoltCargo.WebUI.Controllers
         private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly UserManager<CustomIdentityUser> _userManager;
         private readonly SignInManager<CustomIdentityUser> _signInManager;
+        private readonly IRelationShipRequestService _relationshipRequestService;
+        private readonly IRelationShipService _relationShipService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager)
+        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager, IRelationShipRequestService relationshipRequestService, IRelationShipService relationShipService)
         {
             _customIdentityUserService = customIdentityUserService;
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
             _signInManager = signInManager;
+            _relationshipRequestService = relationshipRequestService;
+            _relationShipService = relationShipService;
         }
 
         // GET: api/<UserController>
@@ -44,10 +48,39 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet("AllDrivers")]
         public async Task<List<UserDto>> GetAllDrivers()
         {
-            var drivers = await _userManager.GetUsersInRoleAsync("Driver"); 
+            var drivers = await _userManager.GetUsersInRoleAsync("Driver");
             var orderedDrivers = drivers.OrderByDescending(u => u.IsOnline);
             var driverDtos = _mapper.Map<List<UserDto>>(orderedDrivers);
             return driverDtos;
+
+            //var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            //var user = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            ////var user = await _userManager.GetUserAsync(HttpContext.User);
+            //var requests = await _relationshipRequestService.GetAllAsync();
+            //var drivers = await _userManager.GetUsersInRoleAsync("Driver");
+            //var myRequests = requests.Where(r => r.SenderId == user.Id);
+            //var friends = await _relationShipService.GetAllAsync();
+            //var myFriends = friends.Where(f => f.OwnId == user.Id || f.YourRelationShipId == user.Id);
+            //var users = drivers
+            //    .Where(u => u.Id != user.Id)
+            //    .OrderByDescending(u => u.IsOnline)
+            //    .Select(u => new CustomIdentityUser
+            //    {
+            //        Id = u.Id,
+            //        HasRequestPending = (myRequests.FirstOrDefault(r => r.ReceiverId == u.Id && r.Status == "Request") != null),
+            //        IsRelationShip = myFriends.FirstOrDefault(f => f.OwnId == u.Id || f.YourRelationShipId == u.Id) != null,
+            //        IsOnline = u.IsOnline,
+            //        UserName = u.UserName,
+            //        ImagePath = u.ImagePath,
+            //        Email = u.Email,
+            //        CarType = u.CarType,
+
+            //    }).Where(u => u.IsRelationShip == false).ToList();
+
+            //var driverDtos = _mapper.Map<List<UserDto>>(users);
+
+            //return driverDtos;
         }
 
         [HttpGet("AllClients")]
@@ -57,6 +90,35 @@ namespace BoltCargo.WebUI.Controllers
             var orderedClients = clients.OrderByDescending(u => u.IsOnline);
             var clientDtos = _mapper.Map<List<UserDto>>(orderedClients);
             return clientDtos;
+
+            //var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            //var user = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            ////var user = await _userManager.GetUserAsync(HttpContext.User);
+            //var requests = await _relationshipRequestService.GetAllAsync();
+            //var clients = await _userManager.GetUsersInRoleAsync("Client");
+            //var myRequests = requests.Where(r => r.SenderId == user.Id);
+            //var friends = await _relationShipService.GetAllAsync();
+            //var myFriends = friends.Where(f => f.OwnId == user.Id || f.YourRelationShipId == user.Id);
+            //var users = clients
+            //    .Where(u => u.Id != user.Id)
+            //    .OrderByDescending(u => u.IsOnline)
+            //    .Select(u => new CustomIdentityUser
+            //    {
+            //        Id = u.Id,
+            //        HasRequestPending = (myRequests.FirstOrDefault(r => r.ReceiverId == u.Id && r.Status == "Request") != null),
+            //        IsRelationShip = myFriends.FirstOrDefault(f => f.OwnId == u.Id || f.YourRelationShipId == u.Id) != null,
+            //        IsOnline = u.IsOnline,
+            //        UserName = u.UserName,
+            //        ImagePath = u.ImagePath,
+            //        Email = u.Email,
+            //        CarType = u.CarType,
+
+            //    }).Where(u => u.IsRelationShip == false).ToList();
+
+            //var clientDtos = _mapper.Map<List<UserDto>>(users);
+
+            //return clientDtos;
         }
 
         // GET api/<UserController>/5
