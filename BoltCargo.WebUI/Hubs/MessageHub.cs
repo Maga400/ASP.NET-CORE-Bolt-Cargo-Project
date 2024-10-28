@@ -19,36 +19,58 @@ namespace BoltCargo.WebUI.Hubs
             _customIdentityUserService = customIdentityUserService;
             _httpContextAccessor = httpContextAccessor;
         }
+        public async Task Ping()
+        {
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
+            if (userName != null)
+            {
+                var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+                if (currentUser != null && !currentUser.IsOnline)
+                {
+                    currentUser.IsOnline = true;
+                    await _customIdentityUserService.UpdateAsync(currentUser);
+                    await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
+                }
+            }
+        }
         public override async Task OnConnectedAsync()
         {
-            var userName = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value;
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
 
-            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName!);
-
-            if (currentUser != null)
+            if (userName != null)
             {
-                currentUser.IsOnline = true;
+                var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName!);
 
-                await _customIdentityUserService.UpdateAsync(currentUser);
+                if (currentUser != null)
+                {
+                    currentUser.IsOnline = true;
 
-                await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
+                    await _customIdentityUserService.UpdateAsync(currentUser);
+
+                    await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
+                }
             }
+
 
             await base.OnConnectedAsync();
 
         }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            var userName = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value;
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
 
-            var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName!);
-
-            if (currentUser != null)
+            if (userName != null)
             {
-                currentUser.IsOnline = false;
-                await _customIdentityUserService.UpdateAsync(currentUser);
 
-                await Clients.Others.SendAsync("ReceiveUserDisconnected", currentUser.Id, false);
+                var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName!);
+
+                if (currentUser != null)
+                {
+                    currentUser.IsOnline = false;
+                    await _customIdentityUserService.UpdateAsync(currentUser);
+
+                    await Clients.Others.SendAsync("ReceiveUserDisconnected", currentUser.Id, false);
+                }
             }
 
             await base.OnDisconnectedAsync(exception);

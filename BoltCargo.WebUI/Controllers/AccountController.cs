@@ -143,7 +143,7 @@ namespace BoltCargo.WebUI.Controllers
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
             var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
-
+            
             if (currentUser == null)
             {
                 return NotFound(new { Message = "Current user not found" });
