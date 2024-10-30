@@ -2,6 +2,7 @@
 using BoltCargo.DataAccess.Repositories.Abstracts;
 using BoltCargo.Entities.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,11 +44,11 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
         {
             return await _context.Orders.Include(nameof(Order.User)).Where(o => o.UserId == id).ToListAsync();
         }
-        public async Task<List<Order>> GetByDriverIdAsync(string id)
+        public async Task<List<Order>> GetByDriverIdAsync(string id) 
         {
             return await _context.Orders.Include(nameof(Order.User)).Where(o => o.DriverId == id).ToListAsync();
         }
-
+         
         public async Task UpdateAsync(Order order)
         {
             _context.Orders.Update(order);
@@ -56,7 +57,7 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
 
         public async Task<List<Order>> GetByCarTypeAsync(string carType)
         {
-            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.CarType == carType).ToListAsync();
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.CarType == carType && o.DriverId.IsNullOrEmpty()).ToListAsync();
         }
 
         public async Task<List<Order>> GetAcceptedOrdersAsync()

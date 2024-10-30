@@ -1,5 +1,7 @@
-﻿using BoltCargo.Business.Services.Abstracts;
+﻿using AutoMapper;
+using BoltCargo.Business.Services.Abstracts;
 using BoltCargo.Entities.Entities;
+using BoltCargo.WebUI.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -13,26 +15,28 @@ namespace BoltCargo.WebUI.Hubs
         private readonly UserManager<CustomIdentityUser> _userManager;
         private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public MessageHub(UserManager<CustomIdentityUser> userManager, ICustomIdentityUserService customIdentityUserService, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public MessageHub(UserManager<CustomIdentityUser> userManager, ICustomIdentityUserService customIdentityUserService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _userManager = userManager;
             _customIdentityUserService = customIdentityUserService;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
-        public async Task Ping()
-        {
-            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
-            if (userName != null)
-            {
-                var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
-                if (currentUser != null && !currentUser.IsOnline)
-                {
-                    currentUser.IsOnline = true;
-                    await _customIdentityUserService.UpdateAsync(currentUser);
-                    await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
-                }
-            }
-        }
+        //public async Task Ping()
+        //{
+        //    var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
+        //    if (userName != null)
+        //    {
+        //        var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
+        //        if (currentUser != null && !currentUser.IsOnline)
+        //        {
+        //            currentUser.IsOnline = true;
+        //            await _customIdentityUserService.UpdateAsync(currentUser);
+        //            await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
+        //        }
+        //    }
+        //}
         public override async Task OnConnectedAsync()
         {
             var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
@@ -46,8 +50,9 @@ namespace BoltCargo.WebUI.Hubs
                     currentUser.IsOnline = true;
 
                     await _customIdentityUserService.UpdateAsync(currentUser);
+                    //await AllUsers();
 
-                    await Clients.Others.SendAsync("ReceiveUserConnected", currentUser.Id, true);
+                    await Clients.Others.SendAsync("ReceiveUserConnected");
                 }
             }
 
@@ -68,8 +73,9 @@ namespace BoltCargo.WebUI.Hubs
                 {
                     currentUser.IsOnline = false;
                     await _customIdentityUserService.UpdateAsync(currentUser);
+                    await AllUsers();
 
-                    await Clients.Others.SendAsync("ReceiveUserDisconnected", currentUser.Id, false);
+                    await Clients.Others.SendAsync("ReceiveUserDisconnected");
                 }
             }
 
@@ -77,7 +83,42 @@ namespace BoltCargo.WebUI.Hubs
         }
         public async Task AllUsers()
         {
-            await Clients.Others.SendAsync("ReceiveUsers");
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (userName != null)
+            {
+                var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName!);
+
+                if (currentUser != null)
+                {
+                    var isClient = await _userManager.IsInRoleAsync(currentUser, "Client");
+                    //var isDriver = await _userManager.IsInRoleAsync(currentUser, "Driver");
+
+                    if (isClient)
+                    {
+                        var drivers = await _userManager.GetUsersInRoleAsync("Client");
+                        var users = drivers.OrderByDescending(u => u.IsOnline);
+                        var userDtos = _mapper.Map<List<UserDto>>(users);
+
+
+                        await Clients.Others.SendAsync("ReceiveUsers", userDtos);
+
+                    }
+
+                    else
+                    {
+                        var clients = await _userManager.GetUsersInRoleAsync("Driver");
+                        var users = clients.OrderByDescending(u => u.IsOnline);
+                        var userDtos = _mapper.Map<List<UserDto>>(users);
+
+                        await Clients.Others.SendAsync("ReceiveUsers", userDtos);
+
+                    }
+                    //await AllUsers();
+
+                }
+            }
+            //await Clients.Others.SendAsync("ReceiveUsers");
         }
         public async Task AllFeedBacks()
         {

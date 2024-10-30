@@ -129,7 +129,7 @@ namespace BoltCargo.WebUI.Controllers
             if (user != null)
             {
                 var userDto = _mapper.Map<UserDto>(user);
-                return Ok(new { user = userDto });
+                return Ok(new { user = userDto }); 
             }
             return NotFound(new { message = "No user found with this id" });
         }

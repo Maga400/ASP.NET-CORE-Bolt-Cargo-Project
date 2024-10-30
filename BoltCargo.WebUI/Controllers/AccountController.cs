@@ -154,9 +154,9 @@ namespace BoltCargo.WebUI.Controllers
             return Ok(new { user = currentUserDto, role = userRole });
 
         }
-
+           
         [Authorize]
-        [HttpGet("logout")]
+        [HttpGet("logout")] 
         public async Task<IActionResult> Logout()
         {
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;

@@ -27,8 +27,6 @@ namespace BoltCargo.Business.Services.Concretes
         {
             await _orderDAL.DeleteAsync(order);
         }
-
-
         public async Task<List<Order>> GetAllAsync()
         {
             return await _orderDAL.GetAllAsync();

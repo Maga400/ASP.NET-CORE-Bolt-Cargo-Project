@@ -18,7 +18,7 @@ namespace BoltCargo.WebUI.Dtos
         public decimal? CarPrice { get; set; }
         public decimal? TotalPrice { get; set; }
         public string? UserId { get; set; }
-        public virtual CustomIdentityUser? User { get; set; }
+        public CustomIdentityUser? User { get; set; }
         public string? DriverId { get; set; }
     }
 }

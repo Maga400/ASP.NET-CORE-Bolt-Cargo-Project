@@ -5,6 +5,7 @@ using BoltCargo.WebUI.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BoltCargo.WebUI.Controllers
 {
@@ -87,7 +88,7 @@ namespace BoltCargo.WebUI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("acceptedOrders")]
-        public async Task<List<OrderDto>> GetAcceptedOrders() 
+        public async Task<List<OrderDto>> GetAcceptedOrders()
         {
             var orders = await _orderService.GetAcceptedOrdersAsync();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
@@ -96,7 +97,7 @@ namespace BoltCargo.WebUI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("unAcceptedOrders")]
-        public async Task<List<OrderDto>> GetUnAcceptedOrders() 
+        public async Task<List<OrderDto>> GetUnAcceptedOrders()
         {
             var orders = await _orderService.GetUnAcceptedOrdersAsync();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
@@ -115,8 +116,8 @@ namespace BoltCargo.WebUI.Controllers
 
         // PUT api/<OrderController>/5
         [Authorize(Roles = "Driver")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] OrderUpdateDto dto)
+        [HttpPut("acceptedOrder{id}")]
+        public async Task<IActionResult> AcceptOrder(int id, [FromBody] OrderUpdateDto dto)
         {
             var order = await _orderService.GetByIdAsync(id);
             if (order != null)
@@ -124,9 +125,35 @@ namespace BoltCargo.WebUI.Controllers
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
                 order.IsAccept = dto.IsAccept;
                 order.DriverId = dto.DriverId;
-                
+
                 await _orderService.UpdateAsync(order);
-                return Ok(new {Message = "Order Updated Successfully"});
+                return Ok(new { Message = "Order Updated Successfully" });
+            }
+
+            return NotFound(new { message = "No order found with this id" });
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpPut("updatedOrder{id}")]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderExtensionDto dto)
+        {
+            var order = await _orderService.GetByIdAsync(id);
+            if (order != null)
+            {
+                order.Km = dto.Km;
+                order.CarType = dto.CarType;
+                order.CurrentLocation = dto.CurrentLocation;
+                order.Destination = dto.Destination;
+                order.ImagePath = dto.ImagePath;
+                order.Message = dto.Message;
+                order.OrderDate = dto.OrderDate;
+                order.RoadPrice = dto.RoadPrice;
+                order.CarPrice = dto.CarPrice;
+                order.TotalPrice = dto.TotalPrice;
+                order.UserId = dto.UserId;
+
+                await _orderService.UpdateAsync(order);
+                return Ok(new { Message = "Order Updated Successfully" });
             }
 
             return NotFound(new { message = "No order found with this id" });
