@@ -48,7 +48,7 @@ namespace BoltCargo.WebUI.Controllers
                     var totalPrice = roadPrice * km;
                     return Ok(new { Price = totalPrice });
                 }
-            }
+            } 
             
             return NotFound(new { Message = "Car type not found!" });
         }

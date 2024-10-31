@@ -34,7 +34,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         // GET api/<OrderController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -116,11 +116,11 @@ namespace BoltCargo.WebUI.Controllers
 
         // PUT api/<OrderController>/5
         [Authorize(Roles = "Driver")]
-        [HttpPut("acceptedOrder{id}")]
+        [HttpPut("acceptedOrder/{id}")]
         public async Task<IActionResult> AcceptOrder(int id, [FromBody] OrderUpdateDto dto)
         {
             var order = await _orderService.GetByIdAsync(id);
-            if (order != null)
+            if (order != null) 
             {
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
                 order.IsAccept = dto.IsAccept;
@@ -134,10 +134,10 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [Authorize(Roles = "Client")]
-        [HttpPut("updatedOrder{id}")]
+        [HttpPut("updatedOrder/{id}")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderExtensionDto dto)
         {
-            var order = await _orderService.GetByIdAsync(id);
+            var order = await _orderService.GetByIdAsync(id); 
             if (order != null)
             {
                 order.Km = dto.Km;

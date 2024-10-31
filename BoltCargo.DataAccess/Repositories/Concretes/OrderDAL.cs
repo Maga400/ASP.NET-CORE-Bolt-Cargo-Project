@@ -57,7 +57,7 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
 
         public async Task<List<Order>> GetByCarTypeAsync(string carType)
         {
-            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.CarType == carType && o.DriverId.IsNullOrEmpty()).ToListAsync();
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.CarType == carType && string.IsNullOrEmpty(o.DriverId)).ToListAsync();
         }
 
         public async Task<List<Order>> GetAcceptedOrdersAsync()
