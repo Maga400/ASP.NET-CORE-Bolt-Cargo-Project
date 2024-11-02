@@ -5,7 +5,7 @@ namespace BoltCargo.WebUI.Dtos
     public class OrderDto
     {
         public int Id { get; set; }
-        public int Km { get; set; }
+        public double Km { get; set; }
         public string? CarType { get; set; }
         public string? CurrentLocation { get; set; }
         public string? Destination { get; set; }

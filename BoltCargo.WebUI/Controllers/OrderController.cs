@@ -14,17 +14,19 @@ namespace BoltCargo.WebUI.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
+        private readonly IOrderService _orderService;
+        private readonly ICustomIdentityUserService _customIdentityUserService;
 
-        public OrderController(IOrderService orderService, IMapper mapper)
+        public OrderController(IOrderService orderService, IMapper mapper, ICustomIdentityUserService customIdentityUserService)
         {
             _orderService = orderService;
             _mapper = mapper;
+            _customIdentityUserService = customIdentityUserService;
         }
 
         // GET: api/<OrderController>
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet]
         public async Task<List<OrderDto>> Get()
         {
@@ -109,7 +111,11 @@ namespace BoltCargo.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderExtensionDto dto)
         {
+            //var user = _mapper.Map<CustomIdentityUser>(dto.UserDto);
+            //order.User = user; 
+            var user = await _customIdentityUserService.GetByIdAsync(dto.UserId);
             var order = _mapper.Map<Order>(dto);
+            order.User = user;
             await _orderService.AddAsync(order);
             return Ok(new { message = "Order Added Successfully." });
         }
@@ -121,6 +127,7 @@ namespace BoltCargo.WebUI.Controllers
         {
             var order = await _orderService.GetByIdAsync(id);
             if (order != null) 
+
             {
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
                 order.IsAccept = dto.IsAccept;

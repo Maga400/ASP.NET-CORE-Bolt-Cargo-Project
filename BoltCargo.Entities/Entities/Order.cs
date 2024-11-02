@@ -10,7 +10,7 @@ namespace BoltCargo.Entities.Entities
     public class Order
     {
         public int Id { get; set; }
-        public int Km { get; set; }
+        public double Km { get; set; }
         public string? CarType { get; set; }
         public string? CurrentLocation { get; set; }
         public string? Destination { get; set; }
@@ -18,7 +18,7 @@ namespace BoltCargo.Entities.Entities
         public string? Message { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime OrderAcceptedDate { get; set; }
-        public bool IsAccept { get; set; }
+        public bool IsAccept { get; set; } = false;
         public decimal? RoadPrice { get; set; }
         public decimal? CarPrice { get; set; }
         public decimal? TotalPrice { get; set; }

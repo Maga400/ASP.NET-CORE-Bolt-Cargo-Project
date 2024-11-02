@@ -6,7 +6,7 @@ namespace BoltCargo.WebUI.Dtos
     public class OrderExtensionDto
     {
         [Required]
-        public int Km { get; set; }
+        public double Km { get; set; }
         [Required]
         public string? CarType { get; set; }
         [Required]
@@ -29,7 +29,7 @@ namespace BoltCargo.WebUI.Dtos
         public decimal? TotalPrice { get; set; }
         [Required]
         public string? UserId { get; set; }
-        public CustomIdentityUser? User { get; set; }
+        //public UserDto? UserDto { get; set; }
         //public string? DriverId { get; set; }
     }
 }
