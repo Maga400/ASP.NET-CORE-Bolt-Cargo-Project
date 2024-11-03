@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BoltCargo.Entities.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace BoltCargo.WebUI.Dtos
 {
@@ -12,5 +13,6 @@ namespace BoltCargo.WebUI.Dtos
         public bool IsAccept { get; set; }
         [Required]
         public string? DriverId { get; set; }
+        //public CustomIdentityUser? Driver { get; set; }
     }
 }
