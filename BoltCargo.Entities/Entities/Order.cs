@@ -19,6 +19,7 @@ namespace BoltCargo.Entities.Entities
         public DateTime OrderDate { get; set; }
         public DateTime OrderAcceptedDate { get; set; }
         public bool IsAccept { get; set; } = false;
+        public bool IsFinish { get; set; }
         public decimal? RoadPrice { get; set; }
         public decimal? CarPrice { get; set; }
         public decimal? TotalPrice { get; set; }

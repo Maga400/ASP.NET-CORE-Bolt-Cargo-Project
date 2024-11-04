@@ -42,11 +42,11 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
 
         public async Task<List<Order>> GetByUserIdAsync(string id)
         {
-            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.UserId == id).ToListAsync();
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.UserId == id && o.IsFinish == false).ToListAsync();
         }
         public async Task<List<Order>> GetByDriverIdAsync(string id) 
         {
-            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.DriverId == id).ToListAsync();
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.DriverId == id && o.IsFinish == false).ToListAsync();
         }
          
         public async Task UpdateAsync(Order order)
@@ -69,6 +69,16 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
         {
             return await _context.Orders.Include(nameof(Order.User)).Where(o => o.IsAccept == false).ToListAsync();
 
+        }
+
+        public async Task<List<Order>> GetClientFinishedOrdersAsync(string id)
+        {
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.UserId == id && o.IsFinish).ToListAsync();
+        }
+
+        public async Task<List<Order>> GetDriverFinishedOrdersAsync(string id)
+        {
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.DriverId == id && o.IsFinish).ToListAsync();
         }
     }
 }

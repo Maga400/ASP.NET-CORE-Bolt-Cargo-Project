@@ -62,6 +62,19 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { message = "No user orders found with this id" });
         }
 
+        [Authorize(Roles = "Client")]
+        [HttpGet("clientFinishedOrders/{id}")]
+        public async Task<IActionResult> GetClientFinishedOrders(string id)
+        {
+            var orders = await _orderService.GetClientFinishedOrdersAsync(id);
+            if (orders != null)
+            {
+                var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+                return Ok(new { orders = ordersDto });
+            }
+            return NotFound(new { message = "No user finished orders found with this id" });
+        }
+
         [Authorize(Roles = "Driver")]
         [HttpGet("driverOrders/{id}")]
         public async Task<IActionResult> GetDriverOrders(string id)
@@ -73,6 +86,19 @@ namespace BoltCargo.WebUI.Controllers
                 return Ok(new { orders = ordersDto });
             }
             return NotFound(new { message = "No driver orders found with this id" });
+        }
+
+        [Authorize(Roles = "Driver")]
+        [HttpGet("driverFinishedOrders/{id}")]
+        public async Task<IActionResult> GetDriverFinishedOrders(string id)
+        {
+            var orders = await _orderService.GetDriverFinishedOrdersAsync(id);
+            if (orders != null)
+            {
+                var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+                return Ok(new { orders = ordersDto });
+            }
+            return NotFound(new { message = "No driver finished orders found with this id" });
         }
 
         [Authorize(Roles = "Driver")]
@@ -133,6 +159,23 @@ namespace BoltCargo.WebUI.Controllers
                 order.IsAccept = dto.IsAccept;
                 order.DriverId = dto.DriverId;
                 //order.Driver = dto.Driver;
+
+                await _orderService.UpdateAsync(order);
+                return Ok(new { Message = "Order Updated Successfully" });
+            }
+
+            return NotFound(new { message = "No order found with this id" });
+        }
+
+        [Authorize(Roles = "Driver")]
+        [HttpPut("finishedOrder/{id}")]
+        public async Task<IActionResult> FinishOrder(int id, [FromBody] OrderFinishDto dto)
+        {
+            var order = await _orderService.GetByIdAsync(id);
+            if (order != null)
+
+            {
+                order.IsFinish = dto.IsFinish;
 
                 await _orderService.UpdateAsync(order);
                 return Ok(new { Message = "Order Updated Successfully" });

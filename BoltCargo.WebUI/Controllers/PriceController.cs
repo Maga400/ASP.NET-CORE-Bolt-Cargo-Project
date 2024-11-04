@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BoltCargo.Business.Services.Abstracts;
+using BoltCargo.WebUI.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,9 +13,11 @@ namespace BoltCargo.WebUI.Controllers
     public class PriceController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public PriceController(IConfiguration configuration)
+        private readonly IOrderService _orderService;
+        public PriceController(IConfiguration configuration, IOrderService orderService)
         {
             _configuration = configuration;
+            _orderService = orderService;
         }
 
         [HttpGet("carPrice")]
@@ -51,6 +55,22 @@ namespace BoltCargo.WebUI.Controllers
             } 
             
             return NotFound(new { Message = "Car type not found!" });
+        }
+
+        [Authorize(Roles = "Driver")]
+        [HttpGet("balance/{id}")]
+        public async Task<IActionResult> GetBalance(string id)
+        {
+            var orders = await _orderService.GetDriverFinishedOrdersAsync(id);
+            if (orders != null)
+            {
+                var totalPrice = orders.Sum(o => o.TotalPrice);
+                var totalRoadPrice = orders.Sum(o => o.RoadPrice);
+                var totalCarPrice = orders.Sum(o => o.CarPrice);
+                var ordersCount = orders.Count;
+                return Ok(new { TotalPrice = totalPrice,TotalRoadPrice = totalRoadPrice,TotalCarPrice = totalCarPrice,OrdersCount = ordersCount });
+            }
+            return NotFound(new { message = "No user orders found with this id" });
         }
 
         //// GET: api/<PriceController>
