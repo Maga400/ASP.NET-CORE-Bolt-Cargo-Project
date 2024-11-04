@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoltCargo.WebUI.Controllers
 {
-    [Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client,Driver")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PriceController : ControllerBase
@@ -39,12 +39,12 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpGet("roadPrice")]
-        public IActionResult GetRoadPrice(string carType,int km)
+        public IActionResult GetRoadPrice(string carType,double km)
         {
             var carPriceSection = _configuration.GetSection("RoadPrice");
 
             if (carPriceSection != null)
-            {
+            { 
                 var priceValue = carPriceSection[carType];
 
                 if (double.TryParse(priceValue, out double roadPrice))
@@ -68,7 +68,7 @@ namespace BoltCargo.WebUI.Controllers
                 var totalRoadPrice = orders.Sum(o => o.RoadPrice);
                 var totalCarPrice = orders.Sum(o => o.CarPrice);
                 var ordersCount = orders.Count;
-                return Ok(new { TotalPrice = totalPrice,TotalRoadPrice = totalRoadPrice,TotalCarPrice = totalCarPrice,OrdersCount = ordersCount });
+                return Ok(new { TotalPrice = totalPrice, TotalRoadPrice = totalRoadPrice, TotalCarPrice = totalCarPrice, OrdersCount = ordersCount });
             }
             return NotFound(new { message = "No user orders found with this id" });
         }

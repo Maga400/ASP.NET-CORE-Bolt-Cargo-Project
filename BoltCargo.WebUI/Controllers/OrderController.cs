@@ -89,7 +89,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [Authorize(Roles = "Driver")]
-        [HttpGet("driverFinishedOrders/{id}")]
+        [HttpGet("driverFinishedOrders/{id}")] 
         public async Task<IActionResult> GetDriverFinishedOrders(string id)
         {
             var orders = await _orderService.GetDriverFinishedOrdersAsync(id);
