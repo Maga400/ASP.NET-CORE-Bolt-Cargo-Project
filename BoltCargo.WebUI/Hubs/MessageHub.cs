@@ -124,6 +124,14 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveFeedBacks");
         }
+        public async Task AllOrders()
+        {
+            await Clients.Others.SendAsync("ReceiveOrders");
+        }
+        public async Task AllGivenOrders()
+        {
+            await Clients.Others.SendAsync("ReceiveGivenOrders");
+        }
 
     }
 }
