@@ -114,7 +114,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpGet("acceptRequest")]
-        public async Task<IActionResult> AcceptRequest(string userId, string senderId, int requestId)
+        public async Task<IActionResult> AcceptRequest(string userId, string senderId)
         {
             var receiverUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
             var sender = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == senderId);
@@ -123,22 +123,10 @@ namespace BoltCargo.WebUI.Controllers
             var user = await _customIdentityUserService.GetByUsernameAsync(userName);
 
             //var user = await _userManager.GetUserAsync(HttpContext.User);
-            var chat = await _context.Chats.Include(nameof(Chat.Messages)).FirstOrDefaultAsync(c => c.SenderId == user.Id && c.ReceiverId == receiverUser.Id || c.ReceiverId == user.Id && c.SenderId == receiverUser.Id);
+            var chat = await _context.Chats.Include(nameof(Chat.Messages)).FirstOrDefaultAsync(c => c.SenderId == user.Id && c.ReceiverId == sender.Id || c.ReceiverId == user.Id && c.SenderId == sender.Id);
 
             if (receiverUser != null)
             {
-                await _relationShipRequestService.AddAsync(new RelationShipRequest
-                {
-                    Content = $"{sender.UserName} accepted relationship request at ${DateTime.Now.ToLongDateString()} ${DateTime.Now.ToShortTimeString()}",
-                    SenderId = senderId,
-                    ReceiverId = receiverUser.Id,
-                    Sender = sender,
-                    Status = "Notification"
-                });
-
-                var relationShipRequests = await _relationShipRequestService.GetAllAsync();
-                var request = relationShipRequests.FirstOrDefault(r => r.Id == requestId);
-                await _relationShipRequestService.DeleteAsync(request);
 
                 await _relationShipService.AddAsync(new RelationShip
                 {
@@ -154,7 +142,7 @@ namespace BoltCargo.WebUI.Controllers
                     chat = new Chat
                     {
                         ReceiverId = receiverUser.Id,
-                        SenderId = user.Id,
+                        SenderId = senderId,
                         Messages = new List<Message>()
                     };
 

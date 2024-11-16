@@ -90,7 +90,8 @@ namespace BoltCargo.WebUI.Controllers
                                      ReceiverId = receiver.Id,
 
                                  };
-                var result = chatBlocks.ToList().Where(c => c.ReceiverId != user.Id);
+                var r = await chatBlocks.ToListAsync();
+                var result = r.Where(c => c.ReceiverId != user.Id);
 
                 if (chat == null)
                 {
