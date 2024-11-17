@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -68,9 +69,16 @@ namespace BoltCargo.WebUI.Controllers
                     CurrentChat = null,
                     Chats = result.Count() == 0 ? chatBlocks : result,
                     CurrentUserName = "",
+                    //Messages = null
                 };
 
-                return Ok(new { Chats = model });
+                //var options = new JsonSerializerOptions
+                //{
+                //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+                //    WriteIndented = true
+                //};
+
+                return new JsonResult(new { AllChats = model });
             }
             else
             {
@@ -90,8 +98,9 @@ namespace BoltCargo.WebUI.Controllers
                                      ReceiverId = receiver.Id,
 
                                  };
-                var r = await chatBlocks.ToListAsync();
-                var result = r.Where(c => c.ReceiverId != user.Id);
+
+                var result = chatBlocks.ToList().Where(c => c.ReceiverId != user.Id);
+
 
                 if (chat == null)
                 {
@@ -111,11 +120,20 @@ namespace BoltCargo.WebUI.Controllers
                     CurrentReceiver = id,
                     CurrentReceiverImage = _context.Users.FirstOrDefault(u => u.Id == id).ImagePath,
                     CurrentChat = chat,
+                    //Messages = chat.Messages,
+                    //ChatReceiverId = chat.ReceiverId,
+                    //ChatSenderId = chat.SenderId,
                     Chats = result.Count() == 0 ? chatBlocks : result,
                     CurrentUserName = _context.Users.FirstOrDefault(u => u.Id == id).UserName,
                 };
 
-                return Ok(new { Chats = model });
+                //var options = new JsonSerializerOptions
+                //{
+                //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+                //    WriteIndented = true
+                //};
+
+                return new JsonResult(new { AllChats = model });
 
             }
         }

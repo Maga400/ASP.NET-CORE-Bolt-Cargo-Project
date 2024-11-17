@@ -1,4 +1,4 @@
-﻿namespace BoltCargo.WebUI.Dtos
+﻿ namespace BoltCargo.WebUI.Dtos
 {
     public class AddMessageDto
     {
