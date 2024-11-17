@@ -148,5 +148,9 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveUser");
         }
+        public async Task AllMessages()
+        {
+            await Clients.Others.SendAsync("ReceiveMessages");
+        }
     }
 }

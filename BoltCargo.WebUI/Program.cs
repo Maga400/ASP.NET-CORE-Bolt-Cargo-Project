@@ -81,6 +81,12 @@ builder.Services.AddScoped<IRelationShipService,RelationShipService>();
 builder.Services.AddScoped<IRelationShipRequestDAL,RelationShipRequestDAL>();
 builder.Services.AddScoped<IRelationShipRequestService,RelationShipRequestService>();
 
+builder.Services.AddScoped<IComplaintDAL, ComplaintDAL>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
+
+builder.Services.AddScoped<IPriceDAL, PriceDAL>();
+builder.Services.AddScoped<IPriceService, PriceService>();
+
 var connection = builder.Configuration.GetConnectionString("Default");
 
 builder.Services.AddDbContext<CargoDbContext>(option =>
