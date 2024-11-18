@@ -18,6 +18,7 @@ namespace BoltCargo.DataAccess.Repositories.Abstracts
         Task<List<Order>> GetByCarTypeAsync(string carType);
         Task<List<Order>> GetAcceptedOrdersAsync();
         Task<List<Order>> GetUnAcceptedOrdersAsync();
+        Task<List<Order>> GetFinishedOrdersAsync();
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);
         Task DeleteAsync(Order order);

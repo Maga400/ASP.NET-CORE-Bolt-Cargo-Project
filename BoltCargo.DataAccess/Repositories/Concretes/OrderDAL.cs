@@ -68,7 +68,10 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
         public async Task<List<Order>> GetUnAcceptedOrdersAsync()
         {
             return await _context.Orders.Include(nameof(Order.User)).Where(o => o.IsAccept == false).ToListAsync();
-
+        }
+        public async Task<List<Order>> GetFinishedOrdersAsync()
+        {
+            return await _context.Orders.Include(nameof(Order.User)).Where(o => o.IsFinish == true).ToListAsync();
         }
 
         public async Task<List<Order>> GetClientFinishedOrdersAsync(string id)

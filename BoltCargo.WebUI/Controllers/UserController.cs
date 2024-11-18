@@ -41,7 +41,12 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<List<UserDto>> Get()
         {
             var users = await _customIdentityUserService.GetAllAsync();
-            var usersDto = _mapper.Map<List<UserDto>>(users);
+            var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            var anotherUsers = users.Where(u => u.Id != user.Id).ToList();
+
+            var usersDto = _mapper.Map<List<UserDto>>(anotherUsers);
             return usersDto;
         }
 
@@ -119,6 +124,20 @@ namespace BoltCargo.WebUI.Controllers
             //var clientDtos = _mapper.Map<List<UserDto>>(users);
 
             //return clientDtos;
+        }
+
+        [HttpGet("AllAdmins")]
+        public async Task<List<UserDto>> GetAllAdmins()
+        {
+            var admins = await _userManager.GetUsersInRoleAsync("Admins");
+            var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            var orderedAdmins = admins.Where(u => u.Id != user.Id).OrderByDescending(u => u.IsOnline);
+
+            var adminDtos = _mapper.Map<List<UserDto>>(orderedAdmins);
+            return adminDtos;
+
         }
 
         // GET api/<UserController>/5
@@ -230,9 +249,7 @@ namespace BoltCargo.WebUI.Controllers
             }
 
             return NotFound(new { message = "No user found with this id" });
-
         }
-
 
     }
 }

@@ -128,6 +128,10 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveOrders");
         }
+        public async Task AllAdminOrders()
+        {
+            await Clients.Others.SendAsync("ReceiveAdminOrders");
+        }
         public async Task AllGivenOrders()
         {
             await Clients.Others.SendAsync("ReceiveGivenOrders");
@@ -148,9 +152,13 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveUser");
         }
-        public async Task AllMessages()
+        public async Task AllMessages(string receiverId,string senderId)
         {
-            await Clients.Others.SendAsync("ReceiveMessages");
+            await Clients.Others.SendAsync("ReceiveMessages",receiverId,senderId);
+        }
+        public async Task ChangeUserProfile()
+        {
+            await Clients.Others.SendAsync("ReceiveUserProfile");
         }
     }
 }

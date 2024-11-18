@@ -26,7 +26,6 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         // GET: api/<OrderController>
-        [Authorize]
         [HttpGet]
         public async Task<List<OrderDto>> Get()
         {
@@ -36,7 +35,6 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         // GET api/<OrderController>/5
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -128,6 +126,15 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<List<OrderDto>> GetUnAcceptedOrders()
         {
             var orders = await _orderService.GetUnAcceptedOrdersAsync();
+            var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+            return ordersDto;
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("finishedOrders")]
+        public async Task<List<OrderDto>> GetFinishedOrders()
+        {
+            var orders = await _orderService.GetFinishedOrdersAsync();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
             return ordersDto;
         }

@@ -17,7 +17,6 @@ namespace BoltCargo.Business.Services.Concretes
         {
             _orderDAL = orderDAL;
         }
-
         public async Task AddAsync(Order order)
         {
             await _orderDAL.AddAsync(order);
@@ -70,6 +69,10 @@ namespace BoltCargo.Business.Services.Concretes
         public async Task<List<Order>> GetDriverFinishedOrdersAsync(string id)
         {
             return await _orderDAL.GetDriverFinishedOrdersAsync(id);
+        }
+        public async Task<List<Order>> GetFinishedOrdersAsync()
+        {
+            return await _orderDAL.GetFinishedOrdersAsync();
         }
     }
 }

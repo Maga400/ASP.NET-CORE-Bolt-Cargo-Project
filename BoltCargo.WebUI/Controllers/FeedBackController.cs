@@ -26,7 +26,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet]
         public async Task<List<FeedBackDto>> Get()
         {
-            var feedBacks = await _feedBackService.GetAllAsync();
+            var feedBacks = await _feedBackService.GetAllAsync(); 
             var feedBackDtos = _mapper.Map<List<FeedBackDto>>(feedBacks);
 
             return feedBackDtos;
