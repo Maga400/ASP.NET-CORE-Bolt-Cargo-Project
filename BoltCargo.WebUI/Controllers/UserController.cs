@@ -129,7 +129,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet("AllAdmins")]
         public async Task<List<UserDto>> GetAllAdmins()
         {
-            var admins = await _userManager.GetUsersInRoleAsync("Admins");
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _customIdentityUserService.GetByUsernameAsync(userName);
 

@@ -136,8 +136,8 @@ namespace BoltCargo.WebUI.Controllers
         {
             var orders = await _orderService.GetFinishedOrdersAsync();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
-            return ordersDto;
-        }
+            return ordersDto; 
+        } 
 
         // POST api/<OrderController>
         [Authorize(Roles = "Client")]

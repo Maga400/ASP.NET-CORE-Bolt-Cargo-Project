@@ -20,7 +20,7 @@ namespace BoltCargo.DataAccess.Repositories.Abstracts
         Task<List<Order>> GetUnAcceptedOrdersAsync();
         Task<List<Order>> GetFinishedOrdersAsync();
         Task AddAsync(Order order);
-        Task UpdateAsync(Order order);
+        Task UpdateAsync(Order order); 
         Task DeleteAsync(Order order);
     }
 }
