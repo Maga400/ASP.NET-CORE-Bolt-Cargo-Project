@@ -237,9 +237,8 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { Message = "No user found with this id" });
         }
 
-        // DELETE api/<UserController>/5
-        [HttpPut]
-        public async Task<IActionResult> BanUser(string id,bool ban)
+        [HttpPut("BanUser/{id}")]
+        public async Task<IActionResult> BanUser(string id,[FromBody] bool ban)
         {
             var user = await _customIdentityUserService.GetByIdAsync(id);
             if (user != null)

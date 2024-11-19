@@ -74,6 +74,7 @@ namespace BoltCargo.WebUI.Hubs
                     currentUser.IsOnline = false;
                     await _customIdentityUserService.UpdateAsync(currentUser);
                     await AllUsers();
+                    await DisConnectForAdmin();
 
                     await Clients.Others.SendAsync("ReceiveUserDisconnected");
                 }
@@ -159,6 +160,14 @@ namespace BoltCargo.WebUI.Hubs
         public async Task ChangeUserProfile()
         {
             await Clients.Others.SendAsync("ReceiveUserProfile");
+        }
+        public async Task ConnectForAdmin()
+        {
+            await Clients.Others.SendAsync("ReceiveAdminConnect");  
+        }
+        public async Task DisConnectForAdmin()
+        {
+            await Clients.Others.SendAsync("ReceiveAdminDisConnect");
         }
     }
 }

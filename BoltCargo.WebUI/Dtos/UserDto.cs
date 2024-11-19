@@ -12,6 +12,8 @@ namespace BoltCargo.WebUI.Dtos
         public bool IsOnline { get; set; }
         public bool IsRelationShip { get; set; }
         public bool HasRequestPending { get; set; }
+        public bool IsBan { get; set; }
+
         //public virtual ICollection<Order>? Orders { get; set; }
         //public virtual ICollection<FeedBack>? FeedBacks { get; set; } 
     }

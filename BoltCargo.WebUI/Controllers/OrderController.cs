@@ -174,15 +174,59 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { message = "No order found with this id" });
         }
 
+        //[Authorize(Roles = "Driver")]
+        //[HttpPut("finishedOrder/{id}")]
+        //public async Task<IActionResult> FinishOrder(int id, [FromBody] OrderFinishDto dto)
+        //{
+        //    var order = await _orderService.GetByIdAsync(id);
+        //    if (order != null)
+
+        //    {
+        //        order.IsFinish = dto.IsFinish;
+
+        //        await _orderService.UpdateAsync(order);
+        //        return Ok(new { Message = "Order Updated Successfully" });
+        //    }
+
+        //    return NotFound(new { message = "No order found with this id" });
+        //}
+
         [Authorize(Roles = "Driver")]
-        [HttpPut("finishedOrder/{id}")]
+        [HttpPut("driverFinished/{id}")]
         public async Task<IActionResult> FinishOrder(int id, [FromBody] OrderFinishDto dto)
         {
             var order = await _orderService.GetByIdAsync(id);
             if (order != null)
 
             {
-                order.IsFinish = dto.IsFinish;
+                order.IsDriverFinish = dto.IsFinish;
+
+                if(order.IsDriverFinish && order.IsClientFinish) 
+                {
+                    order.IsFinish = true;
+                }
+
+                await _orderService.UpdateAsync(order);
+                return Ok(new { Message = "Order Updated Successfully" });
+            }
+
+            return NotFound(new { message = "No order found with this id" });
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpPut("clientFinished/{id}")]
+        public async Task<IActionResult> Finished(int id, [FromBody] OrderFinishDto dto)
+        {
+            var order = await _orderService.GetByIdAsync(id);
+            if (order != null)
+
+            {
+                order.IsClientFinish = dto.IsFinish;
+
+                if (order.IsDriverFinish && order.IsClientFinish)
+                {
+                    order.IsFinish = true;
+                }
 
                 await _orderService.UpdateAsync(order);
                 return Ok(new { Message = "Order Updated Successfully" });
