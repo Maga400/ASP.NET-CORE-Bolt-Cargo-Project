@@ -90,7 +90,14 @@ namespace BoltCargo.WebUI.Controllers
 
             if (result.Succeeded)
             {
+                
+
                 var user = await _userManager.FindByNameAsync(dto.Username);
+
+                if (user.IsBan)
+                {
+                    return BadRequest(new { Message = "This user has been banned by Admin",Error = "BAN"});
+                }
 
                 var userRoles = await _userManager.GetRolesAsync(user);
 

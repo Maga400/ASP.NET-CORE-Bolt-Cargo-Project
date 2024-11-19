@@ -238,14 +238,15 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpPut]
+        public async Task<IActionResult> BanUser(string id,bool ban)
         {
             var user = await _customIdentityUserService.GetByIdAsync(id);
             if (user != null)
             {
-                await _customIdentityUserService.DeleteAsync(user);
-                return Ok(new { message = "User Deleted Successfully" });
+                user.IsBan = ban;
+                await _customIdentityUserService.UpdateAsync(user);
+                return Ok(new { message = "User Updated Successfully" });
             }
 
             return NotFound(new { message = "No user found with this id" });
