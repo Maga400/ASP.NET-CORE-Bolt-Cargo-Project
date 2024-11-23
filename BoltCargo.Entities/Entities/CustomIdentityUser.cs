@@ -22,6 +22,7 @@ namespace BoltCargo.Entities.Entities
         public virtual ICollection<Chat> Chats { get; set; }
         public virtual ICollection<RelationShip> RelationShips { get; set; }
         public virtual ICollection<RelationShipRequest> RelationShipsRequest { get; set; }
+        public virtual ICollection<Card> Cards { get; set; }
         public CustomIdentityUser()
         {
             Orders = new List<Order>();
@@ -29,6 +30,7 @@ namespace BoltCargo.Entities.Entities
             Chats = new List<Chat>();
             RelationShips = new List<RelationShip>();
             RelationShipsRequest = new List<RelationShipRequest>();
+            Cards = new List<Card>();
         }
     }
 }

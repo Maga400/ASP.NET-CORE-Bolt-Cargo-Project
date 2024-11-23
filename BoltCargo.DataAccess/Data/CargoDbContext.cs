@@ -13,7 +13,7 @@ namespace BoltCargo.DataAccess.Data
     {
         public CargoDbContext(DbContextOptions<CargoDbContext> options) : base(options)
         {
-
+                
         }
         public DbSet<Order> Orders { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
@@ -21,8 +21,9 @@ namespace BoltCargo.DataAccess.Data
         public DbSet<RelationShip> RelationShips { get; set; }
         public DbSet<RelationShipRequest> RelationShipRequests { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<Complaint> Complaints { get; set; }
         public DbSet<Price> Prices { get; set; }
+        public DbSet<Complaint> Complaints { get; set; }
+        public DbSet<Card> Cards { get; set; } 
 
         //public DbSet<Driver> Drivers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

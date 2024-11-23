@@ -1,4 +1,5 @@
-﻿using BoltCargo.Business.Services.Abstracts;
+﻿using BoltCargo.Business.Services;
+using BoltCargo.Business.Services.Abstracts;
 using BoltCargo.Business.Services.Concretes;
 using BoltCargo.DataAccess.Data;
 using BoltCargo.DataAccess.Repositories.Abstracts;
@@ -86,6 +87,9 @@ builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
 builder.Services.AddScoped<IPriceDAL, PriceDAL>();
 builder.Services.AddScoped<IPriceService, PriceService>();
+
+builder.Services.AddScoped<ICardDAL, CardDAL>();
+builder.Services.AddScoped<ICardService, CardService>();
 
 var connection = builder.Configuration.GetConnectionString("Default");
 
