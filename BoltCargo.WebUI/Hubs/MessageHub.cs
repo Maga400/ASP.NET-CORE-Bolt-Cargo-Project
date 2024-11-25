@@ -169,5 +169,9 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveAdminDisConnect");
         }
+        public async Task AllComplaints()
+        {
+            await Clients.Others.SendAsync("ReceiveComplaints");
+        }
     }
 }
