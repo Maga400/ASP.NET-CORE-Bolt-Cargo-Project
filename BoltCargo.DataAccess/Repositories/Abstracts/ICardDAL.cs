@@ -11,6 +11,7 @@ namespace BoltCargo.DataAccess.Repositories.Abstracts
     {
         Task<List<Card>> GetAllAsync();
         Task<Card> GetByIdAsync(int id);
+        Task<Card> GetByUserIdAsync(string id);
         Task<Card> GetByCardNumberAsync(string cardNumber,string bankName);
         Task AddAsync(Card card);
         Task UpdateAsync(Card card);

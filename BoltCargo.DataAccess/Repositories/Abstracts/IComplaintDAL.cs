@@ -11,6 +11,7 @@ namespace BoltCargo.DataAccess.Repositories.Abstracts
     {
         Task<List<Complaint>> GetAllAsync();
         Task<Complaint> GetByIdAsync(int id);
+        Task<int> GetReceiverComplaintsCountAsync(string receiverId);
         Task AddAsync(Complaint complaint);
         Task UpdateAsync(Complaint complaint);
         Task DeleteAsync(Complaint complaint);

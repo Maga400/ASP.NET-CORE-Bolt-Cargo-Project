@@ -28,7 +28,8 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IHubContext<MessageHub> _hubContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor)
+        private readonly ICardService _cardService;
+        public AccountController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<CustomIdentityRole> roleManager, IConfiguration configuration, IMapper mapper, ICustomIdentityUserService customIdentityUserService, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor, ICardService cardService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -38,6 +39,7 @@ namespace BoltCargo.WebUI.Controllers
             _customIdentityUserService = customIdentityUserService;
             _hubContext = hubContext;
             _httpContextAccessor = httpContextAccessor;
+            _cardService = cardService;
         }
 
         [HttpPost("existUser")]
@@ -76,6 +78,16 @@ namespace BoltCargo.WebUI.Controllers
 
                 var hubContext = _hubContext.Clients.All.SendAsync("AllUsers");
                 await hubContext;
+
+                var card = new Card
+                {
+                    User = user,
+                    UserId = user.Id,
+                    BankName = dto.BankName,
+                    CardNumber = dto.CardNumber,
+                };
+
+                await _cardService.AddAsync(card);
 
                 return Ok(new { Status = "Success", Message = "User created successfuly!" });
             }
@@ -155,7 +167,7 @@ namespace BoltCargo.WebUI.Controllers
             {
                 return NotFound(new { Message = "Current user not found" });
             }
-
+             
             var userRole = await _userManager.GetRolesAsync(currentUser);
             var currentUserDto = _mapper.Map<UserDto>(currentUser);
             return Ok(new { user = currentUserDto, role = userRole });

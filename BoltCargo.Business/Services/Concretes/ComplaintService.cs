@@ -16,17 +16,14 @@ namespace BoltCargo.Business.Services.Concretes
         {
             _complaintDAL = complaintDAL;
         }
-
         public async Task AddAsync(Complaint complaint)
         {
             await _complaintDAL.AddAsync(complaint);
         }
-
         public async Task DeleteAsync(Complaint complaint)
         {
             await _complaintDAL.DeleteAsync(complaint);
         }
-
         public async Task<List<Complaint>> GetAllAsync()
         {
             return await _complaintDAL.GetAllAsync();
@@ -36,7 +33,10 @@ namespace BoltCargo.Business.Services.Concretes
         {
             return await _complaintDAL.GetByIdAsync(id);
         }
-
+        public async Task<int> GetReceiverComplaintsCountAsync(string receiverId)
+        {
+            return await _complaintDAL.GetReceiverComplaintsCountAsync(receiverId);
+        }
         public async Task UpdateAsync(Complaint complaint)
         {
             await _complaintDAL.UpdateAsync(complaint);

@@ -17,12 +17,13 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IOrderService _orderService;
         private readonly ICustomIdentityUserService _customIdentityUserService;
-
-        public OrderController(IOrderService orderService, IMapper mapper, ICustomIdentityUserService customIdentityUserService)
+        private readonly ICardService _cardService;
+        public OrderController(IOrderService orderService, IMapper mapper, ICustomIdentityUserService customIdentityUserService, ICardService cardService)
         {
             _orderService = orderService;
             _mapper = mapper;
             _customIdentityUserService = customIdentityUserService;
+            _cardService = cardService;
         }
 
         // GET: api/<OrderController>
@@ -87,7 +88,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [Authorize(Roles = "Driver")]
-        [HttpGet("driverFinishedOrders/{id}")] 
+        [HttpGet("driverFinishedOrders/{id}")]
         public async Task<IActionResult> GetDriverFinishedOrders(string id)
         {
             var orders = await _orderService.GetDriverFinishedOrdersAsync(id);
@@ -136,8 +137,8 @@ namespace BoltCargo.WebUI.Controllers
         {
             var orders = await _orderService.GetFinishedOrdersAsync();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
-            return ordersDto; 
-        } 
+            return ordersDto;
+        }
 
         // POST api/<OrderController>
         [Authorize(Roles = "Client")]
@@ -145,7 +146,15 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<IActionResult> Post([FromBody] OrderExtensionDto dto)
         {
             //var user = _mapper.Map<CustomIdentityUser>(dto.UserDto);
-            //order.User = user; 
+            //order.User = user;
+
+            var card = await _cardService.GetByUserIdAsync(dto.UserId);
+
+            if (dto.TotalPrice > card.Balance)
+            {
+                return BadRequest(new { Message = "You don't share this order because your card balance is not enough", Error = "Balance" });
+            }
+
             var user = await _customIdentityUserService.GetByIdAsync(dto.UserId);
             var order = _mapper.Map<Order>(dto);
             order.User = user;
@@ -159,7 +168,7 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<IActionResult> AcceptOrder(int id, [FromBody] OrderUpdateDto dto)
         {
             var order = await _orderService.GetByIdAsync(id);
-            if (order != null) 
+            if (order != null)
 
             {
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
@@ -201,9 +210,11 @@ namespace BoltCargo.WebUI.Controllers
             {
                 order.IsDriverFinish = dto.IsFinish;
 
-                if(order.IsDriverFinish && order.IsClientFinish) 
+                if (order.IsDriverFinish && order.IsClientFinish)
                 {
                     order.IsFinish = true;
+                    var card = await _cardService.GetByUserIdAsync(order.UserId);
+                    card.Balance -= order.TotalPrice;
                 }
 
                 await _orderService.UpdateAsync(order);
@@ -226,6 +237,9 @@ namespace BoltCargo.WebUI.Controllers
                 if (order.IsDriverFinish && order.IsClientFinish)
                 {
                     order.IsFinish = true;
+                    var card = await _cardService.GetByUserIdAsync(order.UserId);
+                    card.Balance -= order.TotalPrice;
+
                 }
 
                 await _orderService.UpdateAsync(order);
@@ -239,7 +253,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpPut("updatedOrder/{id}")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderExtensionDto dto)
         {
-            var order = await _orderService.GetByIdAsync(id); 
+            var order = await _orderService.GetByIdAsync(id);
             if (order != null)
             {
                 order.Km = dto.Km;

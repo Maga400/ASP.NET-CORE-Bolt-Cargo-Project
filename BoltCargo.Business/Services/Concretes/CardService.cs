@@ -21,12 +21,10 @@ namespace BoltCargo.Business.Services.Concretes
         {
            await _cardDAL.AddAsync(card);
         }
-
         public async Task DeleteAsync(Card card)
         {
             await _cardDAL.DeleteAsync(card);
         }
-
         public async Task<List<Card>> GetAllAsync()
         {
             return await _cardDAL.GetAllAsync();
@@ -38,6 +36,10 @@ namespace BoltCargo.Business.Services.Concretes
         public async Task<Card> GetByIdAsync(int id)
         {
             return await _cardDAL.GetByIdAsync(id);
+        }
+        public async Task<Card> GetByUserIdAsync(string id)
+        {
+            return await _cardDAL.GetByUserIdAsync(id);
         }
         public async Task UpdateAsync(Card card)
         {

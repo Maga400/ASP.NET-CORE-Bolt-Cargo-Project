@@ -41,6 +41,10 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
         {
             return await _context.Cards.FirstOrDefaultAsync(c => c.Id == id);
         }
+        public async Task<Card> GetByUserIdAsync(string id)
+        {
+            return await _context.Cards.FirstOrDefaultAsync(c => c.UserId == id);
+        }
         public async Task UpdateAsync(Card card)
         {
             _context.Cards.Update(card);

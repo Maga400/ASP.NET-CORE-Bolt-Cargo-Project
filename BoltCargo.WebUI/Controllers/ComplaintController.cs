@@ -17,7 +17,7 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IComplaintService _complaintService;
         private readonly ICustomIdentityUserService _customIdentityUserService;
-        public ComplaintController(IMapper mapper, IComplaintService complaintService, ICustomIdentityUserService customIdentityUserService )
+        public ComplaintController(IMapper mapper, IComplaintService complaintService, ICustomIdentityUserService customIdentityUserService)
         {
             _mapper = mapper;
             _complaintService = complaintService;
@@ -29,6 +29,16 @@ namespace BoltCargo.WebUI.Controllers
         {
             var complaints = await _complaintService.GetAllAsync();
             var complaintsDto = _mapper.Map<List<ComplaintDto>>(complaints);
+
+            foreach (var complaint in complaintsDto)
+            {
+                var sender = await _customIdentityUserService.GetByIdAsync(complaint.SenderId);
+                var receiver = await _customIdentityUserService.GetByIdAsync(complaint.ReceiverId);
+
+                complaint.Sender = sender;
+                complaint.Receiver = receiver;
+            }
+
             return complaintsDto;
         }
 
@@ -44,9 +54,16 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { Message = "No complaint found with this id" });
         }
 
+        [HttpGet("receiverComplaintsCount/{id}")]
+        public async Task<IActionResult> GetReceiverComplaintsCount(string id)
+        {
+            var count = await _complaintService.GetReceiverComplaintsCountAsync(id);
+            return Ok(new { Count = count });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ComplaintAddDto dto)
-        { 
+        {
             var complaint = _mapper.Map<Complaint>(dto);
             await _complaintService.AddAsync(complaint);
 

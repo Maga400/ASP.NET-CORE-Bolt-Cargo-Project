@@ -12,6 +12,7 @@ namespace BoltCargo.Business.Services.Abstracts
         Task<List<Complaint>> GetAllAsync();
         Task<Complaint> GetByIdAsync(int id);
         Task AddAsync(Complaint complaint);
+        Task<int> GetReceiverComplaintsCountAsync(string receiverId);
         Task UpdateAsync(Complaint complaint);
         Task DeleteAsync(Complaint complaint);
     }
