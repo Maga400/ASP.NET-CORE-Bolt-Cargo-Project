@@ -162,6 +162,19 @@ namespace BoltCargo.WebUI.Controllers
             return Ok(new { message = "Order Added Successfully." });
         }
 
+        //[Authorize(Roles = "Client")]
+        //[HttpGet("moneyOnTheCard")]
+        //public async Task<IActionResult> CheckCardBalance([FromQuery] string carType, [FromQuery] string )
+        //{
+        //    var card = await _cardService.GetByUserIdAsync(dto.UserId);
+
+        //    if (dto.TotalPrice > card.Balance)
+        //    {
+        //        return BadRequest(new { Message = "You don't share this order because your card balance is not enough", Error = "Balance" });
+        //    }
+        //    return NotFound(new { message = "No orders found with this car type" });
+        //}
+
         // PUT api/<OrderController>/5
         [Authorize(Roles = "Driver")]
         [HttpPut("acceptedOrder/{id}")]

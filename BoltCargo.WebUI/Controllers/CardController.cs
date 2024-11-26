@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoltCargo.WebUI.Controllers
 {
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class CardController : ControllerBase
@@ -43,6 +44,18 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { Message = "No card found with this id" });
         }
 
+        [HttpGet("CardWithUserId/{id}")]
+        public async Task<IActionResult> GetCardWithUserId(string id)
+        {
+            var card = await _cardService.GetByUserIdAsync(id);
+            if (card != null)
+            {
+                var cardDto = _mapper.Map<CardDto>(card);
+                return Ok(new { Card = cardDto });
+            }
+            return NotFound(new { Message = "No card found with this user id" });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CardAddDto dto)
         {
@@ -53,19 +66,19 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [Authorize(Roles = "Client")]
-        [HttpPut("{cardNumber}")]
-        public async Task<IActionResult> UpdateCard(string cardNumber, [FromBody] CardUpdateDto dto)
+        [HttpPut("cardBalance")]
+        public async Task<IActionResult> UpdateCard([FromQuery] string cardNumber, [FromBody] CardUpdateDto dto)
         {
-            var card = await _cardService.GetByCardNumberAsync(cardNumber,dto.BankName);
+            var card = await _cardService.GetByCardNumberAsync(cardNumber, dto.BankName);        
             if (card != null)
             {
-                card.Balance = dto.Balance;
+                card.Balance += dto.Balance;
 
                 await _cardService.UpdateAsync(card);
-                return Ok(new { Message = "Card Updated Successfully" });
+                return Ok(new { Message = "Card Updated Successfully", Check = true });
             }
 
-            return NotFound(new { message = "No card found with these card number and bank name" });
+            return NotFound(new { Message = "No card found with this card number and bank name", Check = false });
         }
     }
 }

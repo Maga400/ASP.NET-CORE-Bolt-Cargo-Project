@@ -37,21 +37,32 @@ builder.Services.AddCors(options =>
                         .AllowCredentials());
 });
 
+
 //builder.Services.AddCors(options =>
 //{
 //    options.AddPolicy("AllowAllApp",
 //        policy => policy.AllowAnyOrigin()
 //                        .AllowAnyHeader()
 //                        .AllowAnyMethod()
-                        //.AllowCredentials());
+//.AllowCredentials());
 
 //});
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;                
+    options.Cookie.IsEssential = true;           
+});
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSignalR();
-
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.Configure<FormOptions>(o =>
@@ -151,7 +162,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorization(Options =>
 {
-    //Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
     Options.AddPolicy("DriverPolicy", policy => policy.RequireRole("Driver"));
 });
@@ -163,6 +174,7 @@ builder.Services.AddSwaggerGen();
 //builder.WebHost.UseUrls("https://*":10604);
 
 var app = builder.Build();
+app.UseSession();
 
 app.UseCors("AllowReactApp");
 //app.UseCors("AllowAllApp");
@@ -185,5 +197,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<MessageHub>("/messageHub");
+
 
 app.Run();

@@ -9,5 +9,6 @@ namespace BoltCargo.WebUI.Dtos
         public string? Email { get; set; }
         public string? CarType { get; set; }
         public string? ImagePath { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }
