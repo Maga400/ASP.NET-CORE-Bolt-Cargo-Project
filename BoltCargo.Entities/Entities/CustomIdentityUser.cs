@@ -17,6 +17,9 @@ namespace BoltCargo.Entities.Entities
         public bool HasRequestPending { get; set; }
         public DateTime DisConnectTime { get; set; } = DateTime.Now;
         public string? ConnectTime { get; set; } = "";
+        public int RatingCount { get; set; } = 0;
+        public int TotalRating { get;set; } = 0;
+        public double RatingAverage { get; set; } = 0;
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
         public virtual ICollection<Chat> Chats { get; set; }

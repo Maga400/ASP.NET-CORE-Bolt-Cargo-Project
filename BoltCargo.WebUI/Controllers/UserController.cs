@@ -148,9 +148,9 @@ namespace BoltCargo.WebUI.Controllers
             if (user != null)
             {
                 var userDto = _mapper.Map<UserDto>(user);
-                return Ok(new { user = userDto });  
+                return Ok(new { user = userDto });
             }
-            return NotFound(new { message = "No user found with this id" }); 
+            return NotFound(new { message = "No user found with this id" });
         }
 
         // PUT api/<UserController>/5
@@ -195,7 +195,7 @@ namespace BoltCargo.WebUI.Controllers
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 var token = GetToken(authClaims);
 
-                return Ok(new { Message = "User Updated Successfully ", Token = new JwtSecurityTokenHandler().WriteToken(token)});
+                return Ok(new { Message = "User Updated Successfully ", Token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
 
             return BadRequest(new { Message = "Something went wrong! " });
@@ -231,14 +231,14 @@ namespace BoltCargo.WebUI.Controllers
                     return Ok(new { Message = "This password is correct" });
                 }
 
-                return BadRequest( new {Message = "This password is incorrect" });
+                return BadRequest(new { Message = "This password is incorrect" });
             }
 
             return NotFound(new { Message = "No user found with this id" });
         }
 
         [HttpPut("BanUser/{id}")]
-        public async Task<IActionResult> BanUser(string id,[FromBody] bool ban)
+        public async Task<IActionResult> BanUser(string id, [FromBody] bool ban)
         {
             var user = await _customIdentityUserService.GetByIdAsync(id);
             if (user != null)
@@ -250,6 +250,24 @@ namespace BoltCargo.WebUI.Controllers
 
             return NotFound(new { message = "No user found with this id" });
         }
+
+        [HttpPut("rating/{id}")]
+        public async Task<IActionResult> Rating(string id, [FromQuery] int rating)
+        {
+            var user = await _customIdentityUserService.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.TotalRating += rating;
+                user.RatingCount += 1;
+                user.RatingAverage = user.TotalRating / user.RatingCount;
+
+                await _customIdentityUserService.UpdateAsync(user);
+                return Ok(new { message = "User Updated Successfully" });
+            }
+
+            return NotFound(new { message = "No user found with this id" });
+        }
+
 
         [HttpGet("userRole/{id}")]
         public async Task<IActionResult> GetUserRole(string id)

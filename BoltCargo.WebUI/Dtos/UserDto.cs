@@ -14,6 +14,9 @@ namespace BoltCargo.WebUI.Dtos
         public bool IsRelationShip { get; set; }
         public bool HasRequestPending { get; set; }
         public bool IsBan { get; set; }
+        public int RatingCount { get; set; } = 0;
+        public int TotalRating { get; set; } = 0;
+        public double RatingAverage { get; set; } = 0;
 
         //public virtual ICollection<Order>? Orders { get; set; }
         //public virtual ICollection<FeedBack>? FeedBacks { get; set; } 

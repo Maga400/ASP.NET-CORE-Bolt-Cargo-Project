@@ -17,10 +17,9 @@ namespace BoltCargo.WebUI.Dtos
         [Required]
         public string? Role { get; set; }
         [Required]
-        public string? BankName { get; set; } 
+        public string? BankName { get; set; }
         [Required]
         public string? CardNumber { get; set; }
-
         [Required]
         public string? PhoneNumber { get; set; }
     }
