@@ -27,8 +27,8 @@ namespace BoltCargo.WebUI.Controllers
         {
             try
             {
-                _emailService.SendVerificationCode(email);
-                return Ok(new { Message = "Verification code sent successfully." });
+                var code = _emailService.SendVerificationCode(email);
+                return Ok(new { Message = "Verification code sent successfully.",Code = code });
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace BoltCargo.WebUI.Controllers
         public IActionResult SendNotificationMessage([FromQuery] string email,[FromQuery] string message)
         {
             try
-            {
+            { 
                 _emailService.SendEmailNotification(email,message);
                 return Ok(new { Message = "Email Notification sent successfully." });
             }
@@ -72,7 +72,7 @@ namespace BoltCargo.WebUI.Controllers
         }
 
         [HttpPost("verificationCode")]
-        public IActionResult CheckVerificationCode([FromBody] int code)
+        public IActionResult CheckVerificationCode([FromQuery] int code)
         {
             var result = _emailService.CheckVerificationCode(code);
             if (result.IsValid)

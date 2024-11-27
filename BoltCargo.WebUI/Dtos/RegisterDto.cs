@@ -22,5 +22,6 @@ namespace BoltCargo.WebUI.Dtos
         public string? CardNumber { get; set; }
         [Required]
         public string? PhoneNumber { get; set; }
+        //public int ActivateCode { get; set; }
     }
 }

@@ -34,7 +34,11 @@ namespace BoltCargo.DataAccess.Repositories.Concretes
             return await _context.Chats.Include(nameof(Chat.Messages)).Include(nameof(Chat.Receiver)).ToListAsync();
         }
 
-        public async Task<Chat> GetByIdAsync(int id)
+        public async Task<Chat> GetBySenderIdAndReceiverIdAsync(string senderId,string receiverId)
+        {
+            return await _context.Chats.Include(nameof(Chat.Messages)).FirstOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId || c.ReceiverId == senderId && c.SenderId == receiverId);
+        }
+        public async Task<Chat> GetByIdAsync(string receiverId,string senderId)
         {
             return await _context.Chats.Include(nameof(Chat.Messages)).Include(nameof(Chat.Receiver)).FirstOrDefaultAsync(x => x.Id == id);
         }

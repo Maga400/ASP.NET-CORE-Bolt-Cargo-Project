@@ -32,6 +32,10 @@ namespace BoltCargo.Business.Services.Concretes
         {
             return await _chatDAL.GetByIdAsync(id);
         }
+        public async Task<Chat> GetBySenderIdAndReceiverIdAsync(string senderId, string receiverId)
+        {
+           return await _chatDAL.GetBySenderIdAndReceiverIdAsync(senderId, receiverId);
+        }
         public async Task UpdateAsync(Chat chat)
         {
             await _chatDAL.UpdateAsync(chat);

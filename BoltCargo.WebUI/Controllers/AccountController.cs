@@ -57,6 +57,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
+
             var user = new CustomIdentityUser
             {
                 UserName = dto.Username,
@@ -103,8 +104,6 @@ namespace BoltCargo.WebUI.Controllers
 
             if (result.Succeeded)
             {
-                
-
                 var user = await _userManager.FindByNameAsync(dto.Username);
 
                 if (user.IsBan)
@@ -112,7 +111,7 @@ namespace BoltCargo.WebUI.Controllers
                     return BadRequest(new { Message = "This user has been banned by Admin",Error = "BAN"});
                 }
 
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userManager.GetRolesAsync(user); 
 
                 var authClaims = new List<Claim>
                     {

@@ -18,12 +18,14 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IOrderService _orderService;
         private readonly ICustomIdentityUserService _customIdentityUserService;
         private readonly ICardService _cardService;
-        public OrderController(IOrderService orderService, IMapper mapper, ICustomIdentityUserService customIdentityUserService, ICardService cardService)
+        private readonly IChatService _chatService;
+        public OrderController(IOrderService orderService, IMapper mapper, ICustomIdentityUserService customIdentityUserService, ICardService cardService, IChatService chatService)
         {
             _orderService = orderService;
             _mapper = mapper;
             _customIdentityUserService = customIdentityUserService;
             _cardService = cardService;
+            _chatService = chatService;
         }
 
         // GET: api/<OrderController>
@@ -226,8 +228,12 @@ namespace BoltCargo.WebUI.Controllers
                 if (order.IsDriverFinish && order.IsClientFinish)
                 {
                     order.IsFinish = true;
+
                     var card = await _cardService.GetByUserIdAsync(order.UserId);
                     card.Balance -= order.TotalPrice;
+
+                    var chat = await _chatService.GetBySenderIdAndReceiverIdAsync(order.UserId, order.DriverId);
+                    await _chatService.DeleteAsync(chat);
                 }
 
                 await _orderService.UpdateAsync(order);
@@ -250,9 +256,12 @@ namespace BoltCargo.WebUI.Controllers
                 if (order.IsDriverFinish && order.IsClientFinish)
                 {
                     order.IsFinish = true;
+
                     var card = await _cardService.GetByUserIdAsync(order.UserId);
                     card.Balance -= order.TotalPrice;
 
+                    var chat = await _chatService.GetBySenderIdAndReceiverIdAsync(order.UserId,order.DriverId);
+                    await _chatService.DeleteAsync(chat);
                 }
 
                 await _orderService.UpdateAsync(order);

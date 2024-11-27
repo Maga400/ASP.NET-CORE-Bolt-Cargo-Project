@@ -267,8 +267,7 @@ namespace BoltCargo.WebUI.Controllers
 
             return NotFound(new { message = "No user found with this id" });
         }
-
-
+         
         [HttpGet("userRole/{id}")]
         public async Task<IActionResult> GetUserRole(string id)
         {
@@ -278,6 +277,19 @@ namespace BoltCargo.WebUI.Controllers
             if (user != null)
             {
                 return Ok(new { Role = userRole });
+            }
+
+            return NotFound(new { Message = "No user found with this id" });
+        }
+
+        [HttpGet("email/{id}")]
+        public async Task<IActionResult> GetEmail(string id)
+        {
+            var user = await _customIdentityUserService.GetByIdAsync(id);  
+             
+            if (user != null)
+            {
+                return Ok(new { Email = user.Email });
             }
 
             return NotFound(new { Message = "No user found with this id" });

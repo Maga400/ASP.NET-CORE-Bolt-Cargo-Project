@@ -14,7 +14,7 @@ namespace BoltCargo.WebUI.Services.Concretes
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
-        public void SendVerificationCode(string recipientEmail)
+        public int SendVerificationCode(string recipientEmail)
         {
             try
             {
@@ -101,7 +101,9 @@ namespace BoltCargo.WebUI.Services.Concretes
 
                 smtpClient.Send(mailMessage);
 
-                _httpContextAccessor.HttpContext.Session.SetInt32("VerificationCode", verificationCode);
+                //_httpContextAccessor.HttpContext.Session.SetInt32("VerificationCode", verificationCode);
+                return verificationCode;
+                
             }
             catch (Exception ex)
             {
@@ -236,5 +238,4 @@ namespace BoltCargo.WebUI.Services.Concretes
             }
         }
     }
-
 }
