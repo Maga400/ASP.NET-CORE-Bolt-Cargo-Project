@@ -173,5 +173,9 @@ namespace BoltCargo.WebUI.Hubs
         {
             await Clients.Others.SendAsync("ReceiveComplaints");
         }
+        public async Task GiveRateStar(bool finish)
+        {
+            await Clients.Others.SendAsync("ReceiveRateStar",finish);
+        }
     }
 }

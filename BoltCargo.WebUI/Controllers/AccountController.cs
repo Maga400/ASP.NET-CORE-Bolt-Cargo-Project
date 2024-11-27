@@ -87,6 +87,7 @@ namespace BoltCargo.WebUI.Controllers
                     UserId = user.Id,
                     BankName = dto.BankName,
                     CardNumber = dto.CardNumber,
+                    Balance = 0
                 };
 
                 await _cardService.AddAsync(card);

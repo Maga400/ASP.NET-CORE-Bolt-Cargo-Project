@@ -11,7 +11,7 @@ namespace BoltCargo.Business.Services.Abstracts
     {
         Task<List<Chat>> GetAllAsync();
         Task<Chat> GetByIdAsync(int id);
-        Task<Chat> GetBySenderIdAndReceiverIdAsync(string senderId, string receiverId)
+        Task<Chat> GetBySenderIdAndReceiverIdAsync(string senderId, string receiverId);
         Task AddAsync(Chat chat);
         Task UpdateAsync(Chat chat);
         Task DeleteAsync(Chat chat);

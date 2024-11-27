@@ -285,7 +285,7 @@ namespace BoltCargo.WebUI.Controllers
         [HttpGet("email/{id}")]
         public async Task<IActionResult> GetEmail(string id)
         {
-            var user = await _customIdentityUserService.GetByIdAsync(id);  
+            var user = await _customIdentityUserService.GetByIdAsync(id);
              
             if (user != null)
             {
@@ -294,6 +294,8 @@ namespace BoltCargo.WebUI.Controllers
 
             return NotFound(new { Message = "No user found with this id" });
         }
+
+
 
     }
 }

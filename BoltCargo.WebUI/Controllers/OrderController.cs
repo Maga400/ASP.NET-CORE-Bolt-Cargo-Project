@@ -237,7 +237,7 @@ namespace BoltCargo.WebUI.Controllers
                 }
 
                 await _orderService.UpdateAsync(order);
-                return Ok(new { Message = "Order Updated Successfully" });
+                return Ok(new { Message = "Order Updated Successfully",Finish = order.IsFinish });
             }
 
             return NotFound(new { message = "No order found with this id" });
@@ -265,7 +265,7 @@ namespace BoltCargo.WebUI.Controllers
                 }
 
                 await _orderService.UpdateAsync(order);
-                return Ok(new { Message = "Order Updated Successfully" });
+                return Ok(new { Message = "Order Updated Successfully",Finish = order.IsFinish });
             }
 
             return NotFound(new { message = "No order found with this id" });
