@@ -111,10 +111,10 @@ namespace BoltCargo.WebUI.Controllers
 
                 if (user.IsBan)
                 {
-                    return BadRequest(new { Message = "This user has been banned by Admin",Error = "BAN"});
+                    return BadRequest(new { Message = "This user has been banned by Admin", Error = "BAN" });
                 }
 
-                var userRoles = await _userManager.GetRolesAsync(user); 
+                var userRoles = await _userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
                     {
@@ -126,7 +126,7 @@ namespace BoltCargo.WebUI.Controllers
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
-                 
+
                 user.IsOnline = true;
                 await _customIdentityUserService.UpdateAsync(user);
                 var token = GetToken(authClaims);
@@ -165,20 +165,20 @@ namespace BoltCargo.WebUI.Controllers
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
             var currentUser = await _customIdentityUserService.GetByUsernameAsync(userName);
-            
+
             if (currentUser == null)
             {
                 return NotFound(new { Message = "Current user not found" });
             }
-             
+
             var userRole = await _userManager.GetRolesAsync(currentUser);
             var currentUserDto = _mapper.Map<UserDto>(currentUser);
             return Ok(new { user = currentUserDto, role = userRole });
 
         }
-           
+
         [Authorize]
-        [HttpGet("logout")] 
+        [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
@@ -194,6 +194,22 @@ namespace BoltCargo.WebUI.Controllers
             }
 
             return NotFound(new { Message = "User logouting failed" });
+        }
+
+        [HttpGet("secretKey")]
+        public IActionResult GetCarPrice()
+        {
+            var secretKeySection = _configuration.GetSection("SecretKey");
+
+            if (secretKeySection != null)
+            {
+                var key = secretKeySection["Key"];
+
+                return Ok(new { Key = key });
+
+            }
+
+            return NotFound(new { Message = "Secret Key Not Found!" });
         }
     }
 }

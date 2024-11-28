@@ -175,6 +175,9 @@ namespace BoltCargo.WebUI.Controllers
             user.Email = dto.Email;
             user.CarType = dto.CarType;
             user.ImagePath = dto.ImagePath;
+            user.PhoneNumber = dto.PhoneNumber;
+            user.Name = dto.Name;
+            user.Surname = dto.Surname;
 
             var result = await _userManager.UpdateAsync(user);
 
