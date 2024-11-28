@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BoltCargo.Business.Services.Abstracts;
+using BoltCargo.Business.Services.Concretes;
 using BoltCargo.Entities.Entities;
 using BoltCargo.WebUI.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -295,6 +296,24 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { Message = "No user found with this id" });
         }
 
+        [HttpPut("rating")]
+        public async Task<IActionResult> GiveRate([FromQuery] string id, [FromQuery] int rating)
+        {
+            var user = await _customIdentityUserService.GetByIdAsync(id);
+
+            if (user != null)
+
+            {
+                user.RatingCount += 1;
+                user.TotalRating += rating;
+                user.RatingAverage = user.TotalRating / user.RatingCount;
+
+                await _customIdentityUserService.UpdateAsync(user);
+                return Ok(new { Message = "User Updated Successfully" });
+            }
+
+            return NotFound(new { message = "No user found with this id" });
+        }
 
 
     }

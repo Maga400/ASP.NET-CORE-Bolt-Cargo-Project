@@ -11,6 +11,8 @@ namespace BoltCargo.Entities.Entities
     {
         public string? CarType { get; set; }
         public string? ImagePath { get; set; }
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
         public bool IsBan { get; set; }
         public bool IsOnline { get; set; }
         public bool IsRelationShip {  get; set; }

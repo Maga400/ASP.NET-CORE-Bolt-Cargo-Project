@@ -189,6 +189,15 @@ namespace BoltCargo.WebUI.Controllers
                 order.OrderAcceptedDate = dto.OrderAcceptedDate;
                 order.IsAccept = dto.IsAccept;
                 order.DriverId = dto.DriverId;
+
+                if (dto.IsAccept == false)
+                {
+                    order.IsClientFinish = false;
+                    order.IsDriverFinish = false;
+                    var chat = await _chatService.GetBySenderIdAndReceiverIdAsync(order.UserId, order.DriverId);
+                    await _chatService.DeleteAsync(chat);
+                }
+
                 //order.Driver = dto.Driver;
 
                 await _orderService.UpdateAsync(order);

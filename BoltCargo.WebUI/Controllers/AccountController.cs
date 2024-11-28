@@ -65,6 +65,8 @@ namespace BoltCargo.WebUI.Controllers
                 ImagePath = dto.ImagePath,
                 CarType = dto.CarType,
                 PhoneNumber = dto.PhoneNumber,
+                Name = dto.Name,
+                Surname = dto.Surname,
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
