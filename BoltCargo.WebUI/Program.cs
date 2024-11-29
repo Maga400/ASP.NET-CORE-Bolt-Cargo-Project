@@ -18,7 +18,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services to the container 
 
 builder.Services.AddControllers();
 
@@ -36,7 +36,6 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod()
                         .AllowCredentials());
 });
-
 
 //builder.Services.AddCors(options =>
 //{
@@ -139,7 +138,6 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 
-    // SignalR için access_token query parametresini kabul et
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -147,7 +145,6 @@ builder.Services.AddAuthentication(options =>
             var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
 
-            // Sadece /messageHub yolundaki bağlantılar için token'ı kabul et
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/messageHub"))
             {
                 context.Token = accessToken;
@@ -197,6 +194,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<MessageHub>("/messageHub");
-
 
 app.Run();

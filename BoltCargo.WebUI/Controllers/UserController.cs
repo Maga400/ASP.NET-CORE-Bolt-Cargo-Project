@@ -309,7 +309,7 @@ namespace BoltCargo.WebUI.Controllers
             {
                 user.RatingCount += 1;
                 user.TotalRating += rating;
-                user.RatingAverage = user.TotalRating / user.RatingCount;
+                user.RatingAverage = (double)user.TotalRating / user.RatingCount;
 
                 await _customIdentityUserService.UpdateAsync(user);
                 return Ok(new { Message = "User Updated Successfully" });
