@@ -26,7 +26,9 @@ namespace BoltCargo.WebUI.Controllers
         private readonly IRelationShipService _relationShipService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager, IRelationShipRequestService relationshipRequestService, IRelationShipService relationShipService)
+        private readonly IOrderService _orderService;
+        private readonly IComplaintService _complaintService;
+        public UserController(ICustomIdentityUserService customIdentityUserService, IMapper mapper, UserManager<CustomIdentityUser> userManager, IConfiguration configuration, SignInManager<CustomIdentityUser> signInManager, IRelationShipRequestService relationshipRequestService, IRelationShipService relationShipService, IOrderService orderService, IComplaintService complaintService)
         {
             _customIdentityUserService = customIdentityUserService;
             _mapper = mapper;
@@ -35,6 +37,8 @@ namespace BoltCargo.WebUI.Controllers
             _signInManager = signInManager;
             _relationshipRequestService = relationshipRequestService;
             _relationShipService = relationShipService;
+            _orderService = orderService;
+            _complaintService = complaintService;
         }
 
         // GET: api/<UserController>
@@ -271,7 +275,7 @@ namespace BoltCargo.WebUI.Controllers
 
             return NotFound(new { message = "No user found with this id" });
         }
-         
+
         [HttpGet("userRole/{id}")]
         public async Task<IActionResult> GetUserRole(string id)
         {
@@ -290,7 +294,7 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<IActionResult> GetEmail(string id)
         {
             var user = await _customIdentityUserService.GetByIdAsync(id);
-             
+
             if (user != null)
             {
                 return Ok(new { Email = user.Email });
@@ -318,6 +322,59 @@ namespace BoltCargo.WebUI.Controllers
             return NotFound(new { message = "No user found with this id" });
         }
 
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCount()
+        {
+            var users = await _customIdentityUserService.GetAllAsync();
+            var userName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _customIdentityUserService.GetByUsernameAsync(userName);
+
+            if (user != null)
+            {
+                var usersCount = users.Where(u => u.Id != user.Id).Count();
+
+                var admins = await _userManager.GetUsersInRoleAsync("Admin");
+                var adminsCount = admins.Where(u => u.Id != user.Id).Count();
+
+                var drivers = await _userManager.GetUsersInRoleAsync("Driver");
+                var driversCount = drivers.Count;
+
+                var clients = await _userManager.GetUsersInRoleAsync("Client");
+                var clientsCount = clients.Count;
+
+                var orders = await _orderService.GetAllAsync();
+                var ordersCount = orders.Count;
+
+                var acceptedOrders = await _orderService.GetAcceptedOrdersAsync();
+                var acceptedOrdersCount = acceptedOrders.Count;
+
+                var unAcceptedOrders = await _orderService.GetUnAcceptedOrdersAsync();
+                var unAcceptedOrdersCount = unAcceptedOrders.Count;
+
+                var finishedOrders = await _orderService.GetFinishedOrdersAsync();
+                var finishedOrdersCount = finishedOrders.Count;
+
+                var complaints = await _complaintService.GetAllAsync();
+                var complaintsCount = complaints.Count;
+
+                var countDto = new CountDto
+                {
+                    AllUsersCount = usersCount,
+                    AdminsCount = adminsCount,
+                    DriversCount = driversCount,
+                    ClientsCount = clientsCount,
+                    AllOrdersCount = ordersCount,
+                    AcceptedOrdersCount = acceptedOrdersCount,
+                    UnAcceptedOrdersCount = unAcceptedOrdersCount,
+                    FinishedOrdersCount = finishedOrdersCount,
+                    AllComplaintsCount = complaintsCount
+                };
+
+                return Ok(new { Count = countDto });
+            }
+
+            return NotFound(new { Message = "No current user found with user name" });
+        }
 
     }
 }
