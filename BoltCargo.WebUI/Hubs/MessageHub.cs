@@ -179,7 +179,12 @@ namespace BoltCargo.WebUI.Hubs
         }
         public async Task AllRating()
         {
-            await Clients.Others.SendAsync("ReceiveRating");
+            await Clients.Others.SendAsync("ReceiveRating"); 
         }
+        public async Task DeleteChat() 
+        { 
+            await Clients.Others.SendAsync("ReceiveDeleteChat");
+        }
+
     }
 }
