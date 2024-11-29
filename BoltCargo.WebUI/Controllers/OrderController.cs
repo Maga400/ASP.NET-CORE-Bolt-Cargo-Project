@@ -186,17 +186,18 @@ namespace BoltCargo.WebUI.Controllers
             if (order != null)
 
             {
-                order.OrderAcceptedDate = dto.OrderAcceptedDate;
-                order.IsAccept = dto.IsAccept;
-                order.DriverId = dto.DriverId;
-
                 if (dto.IsAccept == false)
                 {
                     order.IsClientFinish = false;
                     order.IsDriverFinish = false;
+
                     var chat = await _chatService.GetBySenderIdAndReceiverIdAsync(order.UserId, order.DriverId);
                     await _chatService.DeleteAsync(chat);
                 }
+
+                order.OrderAcceptedDate = dto.OrderAcceptedDate;
+                order.IsAccept = dto.IsAccept;
+                order.DriverId = dto.DriverId;
 
                 //order.Driver = dto.Driver;
 
@@ -315,6 +316,12 @@ namespace BoltCargo.WebUI.Controllers
 
             if (order != null)
             {
+                if(order.UserId != null && (order.DriverId != null && order.DriverId != "no"))
+                {
+                    var chat = await _chatService.GetBySenderIdAndReceiverIdAsync(order.UserId, order.DriverId);
+                    await _chatService.DeleteAsync(chat); 
+                }
+
                 await _orderService.DeleteAsync(order);
                 return Ok(new { message = "Order Deleted Successfully." });
             }
