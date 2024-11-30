@@ -52,7 +52,7 @@ namespace BoltCargo.WebUI.Controllers
         public async Task<IActionResult> GetMyFeedBacks(string userId)
         {
             var feedBacks = await _feedBackService.GetAllAsync();
-            var myFeedBacks = feedBacks.Where(f => f.UserId == userId);
+            var myFeedBacks = feedBacks.Where(f => f.UserId == userId).ToList();
 
             if (myFeedBacks != null)
             { 
